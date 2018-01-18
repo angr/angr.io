@@ -1,0 +1,33 @@
+baseURL = "http://angr.io/"
+languageCode = "en-us"
+title = "angr"
+theme = "fury"
+
+[[menu.main]]
+  name = "home"
+  url = "/"
+  weight = 1
+[[menu.main]]
+  name = "blog"
+  url = "/blog"
+  weight = 2
+[[menu.main]]
+  name = "docs"
+  url = "http://docs.angr.io/"
+  weight = 3
+[[menu.main]]
+  name = "install"
+  url = "install.html"
+  weight = 4
+[[menu.main]]
+  name = "code"
+  url = "https://github.com/angr"
+  weight = 5
+[[menu.main]]
+  name = "get involved!"
+  url = "index.html#contact"
+  weight = 6
+
+[taxonomies]
+  tag = "tags"
+  author = "authors"

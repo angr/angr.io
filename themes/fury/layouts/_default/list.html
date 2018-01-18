@@ -1,0 +1,10 @@
+{{ partial "header.html" . }}
+{{ range .Pages }}
+<a href="{{ .URL }}" class="post">
+<h1>{{ .Title }}</h1>
+<hr/>
+{{ .Params.Preview }}
+<hr/>
+</a>
+{{end}}
+{{ partial "footer.html" . }}
