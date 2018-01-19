@@ -1,11 +1,12 @@
 {{ partial "header.html" . }}
 {{ range .Pages }}
 <a href="{{ .URL }}" class="post" >
-  <div class="list-main">
-    <span class="list-arrow">&gt;</span>
-    <span class="list-title">{{ .Title }}</span>
+  <div class="bar-appears">
+    <div class="list-main">
+      <span class="list-title">{{ .Title }}</span>
+    </div>
+    <span style="margin-left: 7%; color: #555">{{ .Params.Preview }}</span>
   </div>
-  <span style="margin-left: 7%; color: #555">{{ .Params.Preview }}</span>
 </a>
 {{end}}
 {{ partial "footer.html" . }}
