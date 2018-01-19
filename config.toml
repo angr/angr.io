@@ -2,6 +2,8 @@ baseURL = "http://angr.io/"
 languageCode = "en-us"
 title = "angr"
 theme = "fury"
+pygmentsCodeFences = true
+pygmentsUseClasses = true
 
 [[menu.main]]
   name = "home"
@@ -25,9 +27,13 @@ theme = "fury"
   weight = 5
 [[menu.main]]
   name = "get involved!"
-  url = "index.html#contact"
+  url = "/#contact"
   weight = 6
 
 [taxonomies]
   tag = "tags"
   author = "authors"
+
+[params]
+  announcement = "We're reviving the angr blog! For a tutorial on extending angr and much more soon, see [here](/blog)!"
+

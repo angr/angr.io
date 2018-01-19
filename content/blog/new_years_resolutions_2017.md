@@ -73,6 +73,6 @@ Additionally, because long-running development branches would happen on gitlab, 
 dead for much of the time, with random crazy push activity when we synchronize things.
 Worse, during such processes, we would be unable to accept PRs, as it'd cause merging the long-running branch in would
 be a nightmare.
-In fact, this is *currently* happening, and many PRs are sitting around until the currently huge development effort (
-about which I'll talk below) concludes.
+In fact, this is *currently* happening, and many PRs are sitting around until the currently huge development effort
+(about which I'll talk below) concludes.
 

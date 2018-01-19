@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+{{ if .Site.Params.announcement }}
     <div id="announce">
-      We're launching an angr blog!
-      The first post, with plans for the upcoming year, is <a href="blog/2017_01_10.html">here</a>.
+      {{ .Site.Params.announcement | markdownify}}
     </div>
+{{ end }}
 
 
     <h2>What is angr?</h2>
-    <p>angr is a python framework for <abbr title="Binary analysis is the art of understanding the behavior of compiled programs without source code">analyzing binaries</abbr>. It combines both static and dynamic symbolic ("concolic") analysis, making it applicable to a variety of tasks.</p>
+    <p>angr is a python framework for analyzing binaries. It combines both static and dynamic symbolic ("concolic") analysis, making it applicable to a variety of tasks.</p>
 
     <p>As an introduction to angr's capabilities, here are some of the things that you can do using angr and the tools built with it:</p>
 
@@ -179,10 +180,11 @@ r.interactive()
     <p>There are a few resources you can use to help you get up to speed or get you contributing to the project!</p>
 
       <ul>
+        <li>Check out <a href="/blog">the blog</a>! We're slowly adding many useful examples, tutorials, and walkthroughs there.
         <li>We primarily use slack for communication, at <a href="http://angr.slack.com">angr.slack.com</a>. You can get an invite <a href="invite.html">here</a>.
         <li>If you want real-time communication but absolutely refuse to use slack, you can hang out in <b>#angr</b> on <a href="https://freenode.net/">freenode</a>. Responsiveness here, realistically, is lower than on slack, unfortunately.
         <li>You can file an issue or send us a PR on <a href="https://github.com/angr">github</a> in the appropriate repo.
-        <li>If you prefer email, and don't mind longer response times, shoot an email to angr-at-lists.cs.ucsb.edu. This is a <b>public</b> mailing list (to which you can subscribe <a href="https://lists.cs.ucsb.edu/mailman/listinfo/angr">here</a>, if you're not too scared of the invalid SSL cert).
+        <li>If you prefer email, and don't mind longer response times, shoot an email to angr-at-lists.cs.ucsb.edu. This is a <b>public</b> mailing list (to which you can subscribe <a href="https://lists.cs.ucsb.edu/mailman/listinfo/angr">here</a>).
     </ul>
 
     <p>In all this, please keep in mind that angr is a large project being frantically worked on by a very small group of overworked students. It's open source, with a typical open source support model (i.e., pray for the best).</p>
