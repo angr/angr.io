@@ -180,7 +180,7 @@ a:visited {
 
 .post {
     border-radius: 5px;
-    padding: 10px 5px 25px 5px;
+    padding: 12px 5px 12px 5px;
     display: block;
     color: black;
     text-decoration: none;
@@ -198,10 +198,6 @@ a:visited {
 
 .post:hover .list-item, .post:hover span{
     padding-left: 10px;
-}
-
-.post:hover {
-    /* background-color: #EEE; */
 }
 
 .post:hover .bar-appears {
@@ -222,6 +218,11 @@ a:visited {
     color: black;
     text-decoration: none;
     margin: 1px;
+    transition: background-color 0.15s;
+}
+
+.tag:hover {
+    background-color: #CCC;
 }
 
 .code-chunk pre {
@@ -231,15 +232,16 @@ a:visited {
 }
 
 .bar-appears {
-    background: linear-gradient(to right, #ffc69d 50%, white 50%);
+    background: linear-gradient(to right, #f9f480 50%, white 50%);
     background-size: 200% 100%;
     background-position: right bottom;
     border-left-width: 0px;
     border-left-style: solid;
     border-left-color: #ff6c00;
+    border-left-color: #ff1e19;
     transition: all 0.35s;
-    padding-top: 15px;
-    padding-bottom: 15px;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .list-main {
