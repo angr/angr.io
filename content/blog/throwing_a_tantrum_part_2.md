@@ -31,14 +31,21 @@ The data pointer starts at cell 0.
 
 BrainFuck has only 8 instructions:
 
-`>`: Move the pointer to the right (increment)<br>
-`<`: Move the pointer to the left (decrement)<br>
-`+`: Increment the cell under the pointer<br>
-`-`: Decrement the cell under the pointer<br>
-`[`: If the value at the pointer is zero, skip forward to the matching `]`<br>
-`]`: If the value at the pointer is non-zero, skip backward to the matching `[`<br>
-`.`: Output (print to stdout) the cell at the pointer<br>
-`,`: Input (get character at stdin) to the cell at ptr<br>
+`>` - Move the pointer to the right (increment)
+
+`<` - Move the pointer to the left (decrement)
+
+`+` - Increment the cell under the pointer
+
+`-` - Decrement the cell under the pointer
+
+`[` - If the value at the pointer is zero, skip forward to the matching `]`
+
+`]` - If the value at the pointer is non-zero, skip backward to the matching `[`
+
+`.` - Output (print to stdout) the cell at the pointer
+
+`,` - Input (get character at stdin) to the cell at ptr
 
 ## Defining our architecture
 

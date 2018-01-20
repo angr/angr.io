@@ -12,6 +12,11 @@
     font-size: 13px;
 }
 
+
+.post-content .chroma code {
+    background-color: transparent;
+}
+
 /* Error */
 .chroma .err {
     color: #a61717;

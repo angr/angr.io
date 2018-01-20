@@ -40,7 +40,7 @@ In this guide, we're going to build the most insanely overkill BrainFuck analysi
 
 First, let's go over the components themselves, and how they fit together.
 
-## The angr lifecycle
+# The angr lifecycle
 
 If you've used angr before, you've probably done this:
 (blatantly stolen from [angr-doc's fauxware example](https://github.com/angr/angr-doc/tree/master/examples/fauxware))
@@ -61,7 +61,7 @@ In that little snippet, we load a binary, lift it from machine-code to an interm
   <img style="width: 90%; margin: 3% 5% 0% 5%;" src="/img/angr.png" />
 </div>
 
-### CLE, the loader
+## CLE, the loader
 
 The first thing that happens when you create an angr project is angr has to figure out what the heck you just told it to load.
 For this, it turns to the loader, CLE (CLE Loads Everythig) to come up with an educated guess, extract the executable code and data from whatever format it's in, take a guess as what architecture it's for, and create a representation of the program's memory map as if the real loader had been used.
@@ -70,21 +70,21 @@ For the common cases, this means loading an ELF, which brings with it the compli
 It also supports the exact opposite of this, pure binary blobs, with a backend that just takes the bytes and puts them in the right place in memory.
 The result is a Loader object, which has the memory of the main program itself (`Loader.main_object`) and any libraries.
 
-### Archinfo, the architecture DB
+## Archinfo, the architecture DB
 During CLE's loading, it takes a guess as to what architecture the program is for.
 This is usually via either a header (as in ELFs) or some simple heuristic.
 Either way, it makes a guess, and uses it to fetch an `Arch` object from the `archinfo` package corresponding to it.
 This contains a map of the register file, bit width, usual endian-ness, and so on.
 Literally everything else relies on this, as you can imagine.
 
-### SimEngine, the simulated executer
+## SimEngine, the simulated executer
 Next, angr will locate an execution engine capable of dealing with the code it just loaded.
 Engines are responsible for interpreting the code in some meaningful way.
 Fundamentally, they take a program's _state_-- a snapshot of the registers, memory, and so on-- do some thing to it, usually a basic block's worth of instructions, and produce a set of _successors_, coresponding to all the possible program states that can be reached by executing the current block.
 When branches are encountered, they collect _constraints_ on the state which capture the conditions needed to take each path of the branch.
 In aggregate, this is what gives angr its reasoning power.
 
-### PyVEX, the lifter
+## PyVEX, the lifter
 angr's default engine, SimEngineVEX, supports many architectures, simply because it doesn't run on their machine code directly. It uses an intermediate representation, known as VEX, which machine code is translated (*lifted*) into.
 As an alternative to creating your own engine for a new architecture, if it is similar enough to a "normal" PC architecture, the faster solution is to simply create a Lifter for it, allowing SimEngineVEX to take care of the rest.
 We will explore both Lifters and Engines in this guide.
@@ -104,7 +104,7 @@ Therefore, SimOS' job is to provide all of that to angr, so that it can be reaso
 Based on a guess from CLE, a SimOS is created (ex. SimLinux), which defines the OS-specific embellishments on the initial state of the program, all its system calls, and convenient symbolic summaries of what syscalls and common library functions do, known as *SimProcedures*.
 These make angr dramatically faster and more compatible, as symbolically executing libc itself is, to say the least, insanely painful.
 
-### angr, the real deal
+# angr, the real deal
 Finally, with a Loader, an Engine, an Arch, and a SimOS, we can get to work!
 All of this is packaged into a Project, and offered to the higher-level analyses, such as Control-flow Graph reconstruction, program slicing, and path-based reasoning, as in the earlier example.
 
