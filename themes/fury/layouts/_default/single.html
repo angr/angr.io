@@ -1,25 +1,28 @@
 {{ partial "header" . }}
 <h1>{{ .Title }}</h1>
+{{ if or .Params.Authors .Params.Tags }}
 <div class="subtext">
   {{ $baseurl := .Site.BaseURL }}
-	{{ if .Params.Authors }}
-		Posted in
-		{{ range .Params.Tags }}
-			<a href="{{ $baseurl }}/tags/{{ . }}" class="tag">
-				<img src="{{ $baseurl }}img/tag.png" height="8px" width="8px">
-				{{ replace . "_" " " }}</a>
-		{{ end }}
-	{{ end }}
+  {{ if .Params.Tags }}
+    Posted in
+    {{ range .Params.Tags }}
+      <a href="{{ $baseurl }}/tags/{{ . }}" class="tag">
+	<img src="{{ $baseurl }}img/tag.png" height="8px" width="8px">
+        {{ replace . "_" " " }}
+      </a>
+    {{ end }}
+  {{ end }}
   {{ if .Params.Authors }}
-		by
-		{{range .Params.Authors }}
-			<a href="{{ $baseurl }}/authors/{{ . }}" class="tag">
-				<img src="{{ $baseurl }}img/author.png" height="8px" width="8px">
-				{{ . }}</a>
-		{{ end }}
-	{{ end }}
+    by
+    {{range .Params.Authors }}
+      <a href="{{ $baseurl }}/authors/{{ . }}" class="tag">
+	<img src="{{ $baseurl }}img/author.png" height="8px" width="8px">
+	{{ replace . "_" " " }}
+      </a>
+    {{ end }}
+  {{ end }}
 </div>
-<br>
+{{ end }}
 
 <section class="post-content">
 {{ .Content }}

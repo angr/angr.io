@@ -1,7 +1,7 @@
 ---
 title: "angr's new year resolutions"
 date: 2018-01-15T15:35:26-08:00
-draft: true
+draft: false
 authors: ["zardus"]
 tags: ["announcement"]
 preview: "After a busy 2016, angr is ready to make some new year resolutions!"

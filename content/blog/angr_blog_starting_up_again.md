@@ -1,7 +1,7 @@
 ---
 title: "angr blog starting up again"
 date: 2018-01-15T15:48:59-08:00
-draft: true
+draft: false
 authors: ["lockshaw", "subwire"]
 tags: ["announcements", "testing"]
 preview: "After a year inactive, we're back! Join us for tutorials, examples, and announcements in 2018!"

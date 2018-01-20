@@ -1,4 +1,4 @@
-baseURL = "http://angr.io/"
+baseURL = "https://nilocunger.github.io/"
 languageCode = "en-us"
 title = "angr"
 theme = "fury"
@@ -19,7 +19,7 @@ pygmentsUseClasses = true
   weight = 3
 [[menu.main]]
   name = "install"
-  url = "install.html"
+  url = "/install"
   weight = 4
 [[menu.main]]
   name = "code"

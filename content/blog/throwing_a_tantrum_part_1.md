@@ -1,7 +1,7 @@
 ---
 title: "throwing a tantrum, part 1: angr internals"
 date: 2018-01-18T18:51:25-08:00
-draft: true
+draft: false
 authors:
   - subwire
   - lockshaw
