@@ -1,0 +1,13 @@
+{{ partial "header.html" . }}
+<h1 style="display: inline">{{ .Data.Singular }}: {{ replace .Data.Term "_" " " }}</h1><br>
+{{ range .Pages }}
+<a href="{{ .URL }}" class="post" >
+  <div class="bar-appears">
+    <div class="list-main">
+      <span class="list-title">{{ .Title }}</span>
+    </div>
+    <span style="margin-left: 7%; color: #555">{{ .Params.Preview }}</span>
+  </div>
+</a>
+{{end}}
+{{ partial "footer.html" . }}

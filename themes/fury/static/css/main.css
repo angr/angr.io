@@ -276,3 +276,14 @@ a:visited {
     border-left-width: 15px;
     background-color: white;
 }
+
+.newline-image {
+    background-color: #EEE;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ffb076;
+    margin: 3%;
+    margin-right: 5%;
+    padding: 20px;
+    border-radius: 5px;
+}

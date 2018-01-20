@@ -15,6 +15,7 @@
 
 .post-content .chroma code {
     background-color: transparent;
+    padding: 0px;
 }
 
 /* Error */
