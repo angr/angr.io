@@ -106,3 +106,13 @@ Finally, with a Loader, an Engine, an Arch, and a SimOS, we can get to work!
 All of this is packaged into a Project, and offered to the higher-level analyses, such as Control-flow Graph reconstruction, program slicing, and path-based reasoning, as in the earlier example.
 
 In the next part, we'll introduce our chosen architecture, BrainFuck, and discuss the implementation of additional architectures.
+
+<hr>
+
+Image icons made by
+
+* [Freepik](http://www.freepik.com) from [Flaticon](https://www.flaticon.com/), licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+* [Smashicons](https://www.flaticon.com/authors/smashicons) from [Flaticon](https://www.flaticon.com/), licensed by [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+* [computer](https://www.shareicon.net/computer-processor-computer-hardware-technology-microprocessor-computer-chip-651514)
+* [clipground](http://clipground.com/image-post/70942-dead-lift-clipart-11.jpg.html)
+* [PinArt](http://moziru.com/explore/Binary%20clipart%20computer%20file/#gal_post_4505_binary-clipart-computer-file-6.png)
