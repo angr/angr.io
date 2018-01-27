@@ -18,17 +18,13 @@ pygmentsUseClasses = true
   url = "http://docs.angr.io/"
   weight = 3
 [[menu.main]]
-  name = "install"
-  url = "/install"
-  weight = 4
-[[menu.main]]
   name = "code"
   url = "https://github.com/angr"
-  weight = 5
+  weight = 4
 [[menu.main]]
   name = "get involved!"
   url = "/#contact"
-  weight = 6
+  weight = 5
 
 [taxonomies]
   tag = "tags"

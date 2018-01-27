@@ -59,7 +59,7 @@ From the description above, we notice a few things:
 This last point is worth some discussion.
 In traditional architectures, this is handled by GPIOs, or some complicated mess of peripherals driven by the OS.  We have none of that, we just want bytes in and bytes out.  We'll need to help angr out a bit with this one; there are a few possible ways to implement this, but we're going to explore one that pretends there are mythical system calls to get our bytes in and out.  In a "normal" architecture, this means there's a syscall number in a register somewhere.  We're going to pretend that exists too.
 
-## `archinfo`
+## archinfo
 
 archinfo is the class in the angr suite that holds all of this information.
 To create a new arch, you simply make a subclass of `archinfo.Arch`, and define your registers, their aliases, some info about bit widths and endianess, and so on.
