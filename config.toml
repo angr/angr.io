@@ -33,3 +33,5 @@ pygmentsUseClasses = true
 [params]
   announcement = "We're reviving the angr blog! For a tutorial on extending angr and much more soon, see [here](/blog)!"
 
+[permalinks]
+  top = "/:filename/"
