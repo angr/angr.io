@@ -1,6 +1,6 @@
 ---
 title: "throwing a tantrum"
-date: 2018-01-26T19:14:13-08:00
+date: 2018-01-18T18:51:24-08:00
 draft: true
 authors:
   - subwire
@@ -22,5 +22,8 @@ use angr to analyze BrainFuck programs, then read on.
 * [Part 2: Architectures](http://localhost:1313/blog/throwing_a_tantrum_part_2/)
 * [Part 3: Loaders](http://localhost:1313/blog/throwing_a_tantrum_part_3/)
 * [Part 4: VEX and Gymrat](http://localhost:1313/blog/throwing_a_tantrum_part_4/)
+* Part 5: Engines
+* Part 6: SimOS
+* Part 7: Analyses
 
-For any questions or feedback, please reach out to us on [our slack](angr.slack.com) (get an invite [here](/invite.html).
+For any questions or feedback, please reach out to us on [our slack](angr.slack.com) (get an invite [here](/invite.html)).
