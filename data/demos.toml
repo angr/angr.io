@@ -25,14 +25,15 @@ cfg = '''
 symbolic_execution = '''
 >>> import os
 >>> import angr
->>> project = angr.Project("defcamp_quals_2015_r100", auto_load_libs=False
-)
+>>> project = angr.Project("defcamp_quals_2015_r100", auto_load_libs=False)
 >>> path_group = project.factory.path_group()
 >>> path_group.explore(find=lambda path: 'Nice!' in path.state.posix.dumps(1))
 >>> print path_group.found[0].state.posix.dumps(0)
 Code_Talkers
+'''
 
-# ./defcamp_quals_2015_r100
+symbolic_execution_bash = '''
+$ ./defcamp_quals_2015_r100
 Enter the password: Code_Talkers
 Nice!
 '''
@@ -69,14 +70,14 @@ chain += p64(0x0)
 '''
 
 patcherex = '''
-# patcherex/patch_master.py single test_binaries/CADET_00003 stackretencryption CAD ET_00003_stackretencryption
+$ patcherex/patch_master.py single test_binaries/CADET_00003 stackretencryption CAD ET_00003_stackretencryption
 '''
 
 rex = '''
 >>> import rex
 >>> rex.Crash("vuln_stacksmash", "A"*227).exploit().arsenal["rop_to_system"].script("x.py")
 
-# cat x.py
+$ cat x.py
 import sys
 import time
 from pwn import *

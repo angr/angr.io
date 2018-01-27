@@ -1,0 +1,8 @@
+pip = '''
+$ mkvirtualenv angr
+$ pip install angr
+'''
+
+docker = '''
+$ docker run -it angr/angr
+'''

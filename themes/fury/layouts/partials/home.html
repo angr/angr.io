@@ -28,6 +28,7 @@
         <label for="symexec-example"> <div class="show-more">show code</div> <div class="show-less">hide code</div> </label>
         <div class="expandable">
             {{ highlight .Site.Data.demos.symbolic_execution "python" "" }}
+            {{ highlight .Site.Data.demos.symbolic_execution_bash "bash" "" }}
         </div>
       </span>
       <li>
@@ -78,6 +79,12 @@
 	  	<li>a data backend to abstract away differences between static and symbolic domains, <a href="https://github.com/angr/claripy">Claripy</a></li>
 	  	<li>the program analysis suite itself, <a href="https://github.com/angr/angr">angr</a></li>
     </ul>
+
+    <h2>How do I use angr?</h2>
+    <p>angr works through pip! We recommend installing it in a virtualenv:</p>
+    {{ highlight .Site.Data.install.pip "" "" }}
+    <p>We also provide a docker container:</p>
+    {{ highlight .Site.Data.install.docker "" "" }}
 
     <h2>How do I learn?</h2>
     <p>There are a few resources you can use to help you get up to speed!</p>
