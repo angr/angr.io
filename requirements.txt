@@ -1,0 +1,5 @@
+bs4
+mistletoe
+gitpython
+tqdm
+colorama
