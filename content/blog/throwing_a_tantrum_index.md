@@ -18,10 +18,10 @@ We'll be covering a range of topics from `gymrat` to Analyses, and including a p
 If you're interested in learning how to port angr to a new architecture, write a custom engine or analysis, or even (*gasp*)
 use angr to analyze BrainFuck programs, then read on.
 
-* [Part 1: Angr Internals](http://localhost:1313/blog/throwing_a_tantrum_part_1/)
-* [Part 2: Architectures](http://localhost:1313/blog/throwing_a_tantrum_part_2/)
-* [Part 3: Loaders](http://localhost:1313/blog/throwing_a_tantrum_part_3/)
-* [Part 4: VEX and Gymrat](http://localhost:1313/blog/throwing_a_tantrum_part_4/)
+* [Part 1: Angr Internals](/blog/throwing_a_tantrum_part_1/)
+* [Part 2: Architectures](/blog/throwing_a_tantrum_part_2/)
+* [Part 3: Loaders](/blog/throwing_a_tantrum_part_3/)
+* [Part 4: VEX and Gymrat](/blog/throwing_a_tantrum_part_4/)
 * Part 5: Engines
 * Part 6: SimOS
 * Part 7: Analyses

@@ -47,7 +47,7 @@ Unfortunately, with the way the world has been heading, most of us (shamefully) 
 IRC clients, and instead mostly hang out on various slacks.
 In fact, from the very early days of angr, we have had an [angr slack](https://angr.slack.com) for coordination betw
 een us all at UCSB.
-Now, we are opening this up to the world (to get a slack invite, go [here](../invite.html)), and making it the prima
+Now, we are opening this up to the world (to get a slack invite, go [here](/invite)), and making it the prima
 ry real-time angr support channel.
 We definitely understand that this is going to be a controversial move: people love IRC, and some enjoy other platforms (gitter
 , mattermost, etc).

@@ -139,6 +139,6 @@ While we aimed these features to spare the user from thinking about an IR as muc
 
 Our fully commented example, which lifts MSP430 binary code into VEX, can be found [here](https://github.com/angr/angr-platforms/blob/master/angr_platforms/msp430/instrs_msp430.py). You can also find the, much simpler, BF lifter [here](https://github.com/angr/angr-platforms/blob/master/angr_platforms/bf/lift_bf.py).
 
-Built a really rad lifter? [Let us know on Slack](http://angr.io/invite.html)
+Built a really rad lifter? [Let us know on Slack](/invite)
 
 Next time, we get to talk about execution engines! Better get fueled up.
