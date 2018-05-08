@@ -194,15 +194,6 @@ a:visited {
     transition: padding-left 0.5s;
 }
 
-.post:hover .list-item, .post:hover span{
-    padding-left: 10px;
-}
-
-.post:hover .bar-appears {
-    border-left-width: 7px;
-    background-position: left bottom;
-}
-
 .subtext {
     color: grey;
     font-size: 12px;
@@ -230,16 +221,19 @@ a:visited {
 }
 
 .bar-appears {
-    background: linear-gradient(to right, #f9f480 50%, white 50%);
-    background-size: 200% 100%;
-    background-position: right bottom;
-    border-left-width: 0px;
-    border-left-style: solid;
-    border-left-color: #ff6c00;
-    border-left-color: #ff1e19;
-    transition: all 0.35s;
+    border-width: 0 0 0 10px;
+    border-style: solid;
+    border-left-color: transparent;
+    transition: all 0.1s ease-out 0.005s;
     padding-top: 20px;
     padding-bottom: 20px;
+    padding-left: 10px;
+    background-color: none;
+}
+
+.post:hover .bar-appears {
+    border-left-color: #ffa500;
+    background-color: #EEE;
 }
 
 .list-main {

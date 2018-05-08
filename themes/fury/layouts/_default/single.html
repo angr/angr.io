@@ -13,7 +13,7 @@
     {{ end }}
   {{ end }}
   {{ if .Params.Authors }}
-    by
+    &nbsp;by
     {{range .Params.Authors }}
       <a href="{{ $baseurl }}/authors/{{ . }}" class="tag">
 	<img src="{{ $baseurl }}img/author.png" height="8px" width="8px">
