@@ -8,7 +8,7 @@ preview: "After a year inactive, we're back! Join us for tutorials, examples, an
 ---
 
 Like most New Year resolutions, we did a pretty terrible job of continuing to post on the angr blog throughout 2017.
-We learned from this, so this time we're making an April resolution and bringing the angr blog back!
+We learned from this, so this time we're making an May resolution and bringing the angr blog back!
 
 We know that angr can be pretty unapproachable and that while we have [examples](https://docs.angr.io/docs/examples.html),
 they're generally a little short on the thought process that underlies our solutions.
