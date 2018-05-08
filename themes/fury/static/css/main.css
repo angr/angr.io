@@ -138,6 +138,10 @@ a:visited {
     text-align: center;
 }
 
+#show-more-papers {
+    margin: 20px;
+}
+
 .show-more, .show-less {
     margin: 0px auto;
     font-size: 10px;
