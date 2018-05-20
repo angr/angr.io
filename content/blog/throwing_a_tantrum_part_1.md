@@ -56,7 +56,7 @@ input_0 = sm.active[0].posix.dumps(0)
 That's only a few lines, but there's a whole lot going on here.
 In that little snippet, we load a binary, lift it from machine-code to an intermediate representation that we can reason about a bit more mathematically (VEX, by default), execute representation symbolically, and finally, print the input we needed to give the program to get to the first real branch, computed using a SMT-solver.
 
-{{< img "the angr lifecycle" "angr.png" >}}
+{{< img "the angr lifecycle" "angr_diagram.png" >}}
 
 ## CLE, the loader
 

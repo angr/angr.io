@@ -1,7 +1,6 @@
 baseURL = "https://nilocunger.github.io/"
 languageCode = "en-us"
 title = "angr"
-theme = "fury"
 pygmentsCodeFences = true
 pygmentsUseClasses = true
 
