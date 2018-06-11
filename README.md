@@ -22,17 +22,17 @@ make update
 Note: this will also run `make check` to make sure that there is no out of date code.
 
 ## Uninstalling
-To remove the virtualenv and dependencies, run
+To remove the virtualenv and dependencies:
 ```
 make uninstall
 ```
 
 ## Cleaning
-To remove the current `public` directory, run
+To remove the current `public` directory:
 ```
 make clean
 ```
-To reclone it without rebuilding or redeploying the site, run
+To reclone it without rebuilding or redeploying the site:
 ```
 make public
 ```
