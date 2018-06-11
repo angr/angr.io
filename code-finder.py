@@ -11,20 +11,20 @@ import sys
 import subprocess
 import re
 
-def code_occurences_in_file(f):
-    with open(f, 'r') as f:
+def code_occurences_in_file(fname):
+    with open(fname, 'r') as f:
         rendered = mistletoe.markdown(f)
     parsed = bs4.BeautifulSoup(rendered, 'html.parser')
     for c in parsed.find_all('code'):
-        if 'class' in c.attrs and 'lang-sc' in c.attrs['class']:
+        if 'class' in c.attrs and 'language-sc' in c.attrs['class']:
             contents = list(c.children)[0]
             yield '\n'.join(l + '       ' for l in contents.splitlines())
 
 def tracked_files_in_repo(r):
     repo = Repo(str(r))
     tracked_files = [e[0] for e in repo.index.entries]
-    for f in child.rglob('*'):
-        if str(f.relative_to(child)) in tracked_files:
+    for f in r.rglob('*'):
+        if str(f.relative_to(r)) in tracked_files and f.is_file():
             yield f
 
 def search_file_for_contents(haystack, needle):
