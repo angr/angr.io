@@ -39,7 +39,7 @@ deploy: build
 	cd public
 	git add .
 	git commit -m "Rebuilding hugo site"
-	#git push
+	git push
 
 .PHONY: local
 local:
