@@ -30,7 +30,7 @@ pygmentsUseClasses = true
   author = "authors"
 
 [params]
-  announcement = "We're reviving the angr blog! For a tutorial on extending angr and much more soon, see [here](/blog)!"
+  announcement = "As of angr 8, angr will *only support Python 3.x*. For a handy guide on porting your code to Python 3 and angr 8, see [the angr 8 porting guide.](https://github.com/angr/angr-doc/blob/py3k/MIGRATION.md)."
 
 [permalinks]
   top = "/:filename/"
