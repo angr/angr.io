@@ -20,5 +20,5 @@ or even Brainfuck (*gasp*! Not BrainFuck!), then it's definitely worth giving it
 You can find links to each of the tutorial pages [here](/blog/throwing_a_tantrum_index).
 
 If you have any suggestions for articles or questions for the angr team, please reach out on [our slack](http://angr.slack.com)!
-You can find request an invitation [here](/invite).
+You can request an invitation [here](/invite).
 For more information on how you can contact us and get involved with the angr project, see [here](/#contact).

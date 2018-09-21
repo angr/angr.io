@@ -1,5 +1,7 @@
-VIRTUALENVWRAPPER_SCRIPT=$(shell which virtualenvwrapper.sh)
-PYTHON3_LOCATION=/bin/python3
+SHELL:=$(shell which bash)
+VIRTUALENVWRAPPER_SCRIPT:=$(shell which virtualenvwrapper.sh)
+PYTHON3_LOCATION:=$(shell which python3)
+VIRTUALENVS:=$(shell source $(VIRTUALENVWRAPPER_SCRIPT) && workon)
 
 .PHONY: local
 default: local
@@ -10,9 +12,10 @@ public:
 .PHONY: install
 .ONESHELL:
 install:
-	source ${VIRTUALENVWRAPPER_SCRIPT}
-	mkvirtualenv -p ${PYTHON3_LOCATION} hugo
-	pip install -r requirements.txt
+ifeq (,$(findstring hugo,$(VIRTUALENVS)))
+	source $(VIRTUALENVWRAPPER_SCRIPT)
+	mkvirtualenv -p ${PYTHON3_LOCATION} -r requirements.txt hugo
+endif
 
 .PHONY: uninstall
 .ONESHELL:
@@ -30,7 +33,6 @@ check: install
 
 .PHONY: build
 build: check public
-
 	hugo
 
 .PHONY: deploy
