@@ -2,7 +2,8 @@
 title: "angr 8 release"
 date: 2018-09-26T14:14:02-07:00
 draft: false
-authors: []
+authors:
+  - lockshaw
 tags:
   - release
   - angr8
