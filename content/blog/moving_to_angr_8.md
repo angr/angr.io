@@ -43,4 +43,4 @@ Driven by the need to recover the CFG of a large blob, the angr team has signifi
 Amongst other things, angr is now able to lift blocks without converting their statements into Python objects, perform more of the analysis in C, and avoid lifting any basic block more than once.
 All combined, we've seen this give a more than 5x speedup on large binaries!
 For changes and benchmarking details, see [PR #1092](https://github.com/angr/angr/pull/1092).
-Thanks to **@KevOrr** for the binary that motivated the changes and **@fish** for the optimizations!
+Thanks to **@KevOrr** for the binary that motivated the changes and **@ltfish** for the optimizations!
