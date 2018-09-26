@@ -12,7 +12,7 @@ preview: "Python 3 migration, Clemory refactor, CFGFast optimization, and more"
 
 The angr team is happy to announce the release of a new major version of angr, angr 8!
 angr 8 brings a variety of large and potentially breaking improvements, as well as a bunch of smaller bugfixes.
-The highlights are listed below, but we also recommend checking the angr 8 section of the [Changelog](https://docs.angr.io/) for a list of the major changes and the [Migration Guide](https://docs.angr.io/MIGRATION.html) for help in migrating your project to angr 8.
+The highlights are listed below, but we also recommend checking the angr 8 section of the [Changelog](https://docs.angr.io/CHANGELOG.html) for a list of the major changes and the [Migration Guide](https://docs.angr.io/MIGRATION.html) for help in migrating your project to angr 8.
 
 As always, to contact the angr team please reach out on [our slack](http://angr.slack.com).
 You can request an invitation [here](/invite).
@@ -31,7 +31,8 @@ If you need any help migrating your code to Python 3, please see the [Migration 
 
 With the upgrade to Python 3 come a number of changes to the Clemory API (`project.loader.memory`) around replacing the Python 2 string type with Python 3's `bytes`.
 This should make working with Clemory easier, as well as yield significant performance benefits.
-While most of the new API should be relatively easy to migrate to, if you are using the `cbackers` or `read_bytes_c` functions, the changes may be a little more complicated.
+We also recommend no longer using the `cbackers` and `read_bytes_c` functions, since the improved performance makes them unnecessary.
+Except for this, migrating code to use the new API should be relatively easy.
 For a detailed explanation of the changes, see the [Migration Guide](https://docs.angr.io/MIGRATION.html). Thanks to **@rhelmot** for the refactor!
 
 For those interested, the commit with most of the changes can be found [here](https://github.com/angr/cle/commit/d1b518736e48abe67cfdf0fc1b18f09cf88f17d9).
