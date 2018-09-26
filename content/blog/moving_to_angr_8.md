@@ -10,7 +10,7 @@ tags:
 preview: "Python 3 migration, Clemory refactor, CFGFast optimization, and more"
 ---
 
-We are proud to release a new major release of angr!
+The angr team is happy to announce the release of a new major version of angr, angr 8!
 angr 8 brings a variety of large and potentially breaking improvements, as well as a bunch of smaller bugfixes.
 The highlights are listed below, but we also recommend checking the angr 8 section of the [Changelog](https://docs.angr.io/) for a list of the major changes and the [Migration Guide](https://docs.angr.io/MIGRATION.html) for help in migrating your project to angr 8.
 
@@ -29,7 +29,7 @@ If you need any help migrating your code to Python 3, please see the [Migration 
 
 ## Clemory API Refactor
 
-With the upgrade to Python 3 comes a number of changes to the Clemory API (`project.loader.memory`) around replacing the Python 2 string type with Python 3's `bytes`.
+With the upgrade to Python 3 come a number of changes to the Clemory API (`project.loader.memory`) around replacing the Python 2 string type with Python 3's `bytes`.
 This should make working with Clemory easier, as well as yield significant performance benefits.
 While most of the new API should be relatively easy to migrate to, if you are using the `cbackers` or `read_bytes_c` functions, the changes may be a little more complicated.
 For a detailed explanation of the changes, see the [Migration Guide](https://docs.angr.io/MIGRATION.html). Thanks to **@rhelmot** for the refactor!
