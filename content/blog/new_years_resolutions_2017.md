@@ -97,7 +97,7 @@ Currently, angr is one of the most powerful binary analysis frameworks out there
 We support the 32-bit and 64-bit variants of x86, ARM, MIPS, and PPC,
 and offer a range of static analyses along with a powerful symbolic execution engine.
 This has allowed angr to be used as the base for an [automated ROP generator](https://github.com/salls/angrop),
-a [binary patching engine](https://github.com/shellphish/patcherex),
+a [binary patching engine](https://github.com/angr/patcherex),
 a [next-generation fuzzer](https://github.com/shellphish/driller),
 an [auto-exploitation engine](https://github.com/shellphish/rex),
 and other exiting stuff.
