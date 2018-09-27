@@ -10,7 +10,6 @@ install:
 - export VIRTUALENVWRAPPER_PYTHON=$(pyenv which python)
 - ./setup.sh -i -w -b "$BRANCH" -"$PY" angr -s -c -C
 - sudo apt-get install python3 python3-pip hugo
-- hugo version
 - sudo -H pip3 install --force-reinstall virtualenv virtualenvwrapper
 - popd
 - make install && make public
