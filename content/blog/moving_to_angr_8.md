@@ -24,7 +24,8 @@ For more information on how to get involved with the angr project, see [here](/#
 
 The largest change in angr 8 is the migration to Python 3. **As of angr 8, angr will be dropping all Python 2 support and moving to Python 3**.
 For now, we will be targeting Python 3.5, with plans to eventually move to 3.6.
-The last Python 2-compatible angr release will be version [GET FROM AUDREY].
+The last Python 2-compatible angr release is version 7.8.9.26.
+This release pins the version numbers of all its dependencies so it should hopefully work far into the future.
 If you need any help migrating your code to Python 3, please see the [Migration Guide](https://docs.angr.io/MIGRATION.html).
 
 ## Clemory API Refactor
