@@ -44,7 +44,7 @@ First, let's go over the components themselves, and how they fit together.
 
 If you've used angr before, you've probably done this:
 (blatantly stolen from [angr-doc's fauxware example](https://github.com/angr/angr-doc/tree/master/examples/fauxware))
-```sc
+```python
 import angr
 p = angr.Project("crackme")
 state = p.factory.entry_state()

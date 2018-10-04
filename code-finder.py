@@ -32,7 +32,7 @@ def search_file_for_contents(haystack, needle):
     searchable_needle = re.sub(chopper, '', needle)
     return searchable_needle in searchable_haystack
 
-chopper = re.compile(r'(^\s+)|(\s+$)', re.MULTILINE)
+chopper = re.compile(r'(^\s+)|(\s+$)|(#.*\n)', re.MULTILINE) # TODO: this does not take into account pound signs in strings...
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
