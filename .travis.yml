@@ -4,12 +4,11 @@ env:
 - PY=e ANGR_ROOT=~/angr-dev
 install:
 - sudo apt-get update
+- sudo apt-get install -y python3 python3-pip hugo python3-venv
 - pushd ~
 - git clone -q https://github.com/angr/angr-dev
 - cd angr-dev
-- export VIRTUALENVWRAPPER_PYTHON=$(pyenv which python3)
-- ./setup.sh -i -w -b "$BRANCH" -"$PY" angr -s -c -C
-- sudo apt-get install -y python3 python3-pip hugo python3-venv
+- python3 -m venv angr && source angr/bin/activate && ./setup.sh -i -w -b "$BRANCH" -s -c -C
 - popd
 - make install && make public
 script: make build
