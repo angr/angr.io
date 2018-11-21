@@ -10,7 +10,7 @@ However, there are a lot of libraries and system calls out there, and we cannot 
 
 Analysts may wish to symbolically reason about control flow of a program between two program points B and C, but can't even execute from point A to point B due to unmodeled behaviors. With Symbion, they can execute concretely up to point B, switch into angr's symbolic context, and compute the program input needed to reach point C.  The solution obtained by angr can then be written into the program's memory and by resuming the concrete execution reaching beyond point C.
 
-![image info](symbion_working.jpg)
+{{< img "symbion working" "symbion_working.jpg" >}}
 
 In academia, previous works have explored similar ideas with projects like [Mayhem](https://users.ece.cmu.edu/~dbrumley/pdf/Cha%20et%20al._2012_Unleashing%20Mayhem%20on%20Binary%20Code.pdf), [AVATAR](http://s3.eurecom.fr/docs/bar18_muench.pdf) and [S2E](https://cseweb.ucsd.edu/~dstefan/cse291-fall16/papers/s2e.pdf). We leverege some of the interesting ideas implemented in these projects with the aim of making a hybrid concrete/symbolic approach that is easy to use and flexible enough to build upon.
 
@@ -26,7 +26,7 @@ With these goals in mind, we have worked to create Symbion, while minimizing the
 
 # System overview
 
-![image info](system_overview_symbion.png)
+{{< img "symbion system overview" "system_overview_symbion.png" >}}
 
 The first thing we need to do when performing an analysis is creating the concrete environment we wish to use.  Symbion adds the notion of a ConcreteTarget, a generic abstraction for any execution environment that defines simple memory, register, and execution control interactions.
 
@@ -85,12 +85,11 @@ exploration = simgr.run()
 While this seems simple, a lot of the complexity of Symbion is hidden in the transition between the concrete and the symbolic contexts. The whole magic occurs through a new angr execution engine (SimEngineConcrete) and an accompanying state plugin ( these are complex enough to warrant their own blog post and will be discussed later ).
 For now, it suffices to say that at the end of its execution (when we have reached the target address), the SimConcreteEngine returns a SimState reflecting the current state of the concrete target.
 
-![image info](symbion.gif)
+{{< img "symbion flow" "symbion.gif" >}}
 
 However, this synchronization does _not_ need to copy any memory; during the synchronization with the concrete target, we modify the state's memory backend such that reads are lazily redirected to the underlying concrete memory.
 
-![image info](memory_redirection.jpg)
-
+{{< img "symbion memory redirection" "memory_redirection.jpg" >}}
 
 We are again free to perform any analysis we wish.  Note that while this state forwards memory reads to the underlying concrete target, writes are _not_ forwarded, and will remain only in this symbolic state, until they are concretized and applied to the target.
 Concretization is triggered by the use of the `concretize` argument passed to Symbion. We only need to supply a list of addresses, and the variable we wish to solve for.
@@ -124,13 +123,12 @@ We leave the reversing of the binary and the discovering of its original entry p
 We then execute the binary until we reach the OEP, using the procedure outlined above, and construct the control-flow graph of the unpacked binary.
 By looking at the CFG at the OEP we can easily see 4 possible behaviors of the binary:
 
-![image info](screenshot_cfg_packed64.png)
+{{< img "cfg packed 64" "screenshot_cfg_packed64.png" >}}
 
 All this behavior depends on the hardcoded configuration mentioned at the beginning. We can spot the usage of this configuration at the address 0x400cd6: the point where the first decision is taken from the binary.
 Seems that with the default hardcoded configuration we are following the yellow path!
 
-![image info](default_config_packed64.png)
-
+{{< img "default config packed64" "default_config_packed64.png" >}}
 
 Now, as analysts, our job here is to study this binary's malicious behavior, and how it is triggered.  We see some nasty secondary payload dropped starting in the basic block at 0x400d6a; how do we get there? And what about the basic block 0x400d99? Well, this is what symbolic execution is good for!
 
@@ -207,7 +205,7 @@ Now the new_concrete_state is synchronized with the program's state at 0x400cd6.
 To start to explore symbolically the program we should declare as symbolic the portion of memory that hosts the hardcoded configuration used by the malware.
 We have identified this previously at the address resolved by the operation rbp-0xc0.
 
-![image info](rbp_screenshot.png)
+{{< img "" "rbp_screenshot.png" >}}
 
 Let's leverage this info to declare such portion of memory symbolic!
 
