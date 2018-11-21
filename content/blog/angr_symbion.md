@@ -1,3 +1,11 @@
+---
+title: "symbion: fusing concrete and symbolic execution"
+date: 2018-11-20T15:48:59-08:00
+draft: false
+authors: ["degrigis", "subwire"]
+tags: ["announcements", "symbion"]
+preview: "Learn how to perform symbolic execution on real-world binaries by fusing concrete and symbolic execution"
+---
 
 Today we are going to talk about an exciting new feature that we have recently released on angr's master: Symbion, a brand new exploration technique aimed to overcome some of the complexities that real-world programs exhibit and that can't or are not currently modeled in our symbolic engine.
 
