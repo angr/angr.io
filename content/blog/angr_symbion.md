@@ -4,7 +4,7 @@ date: 2018-11-20T15:48:59-08:00
 draft: false
 authors: ["degrigis", "subwire", "r0rshark"]
 tags: ["announcements", "symbion"]
-preview: "Learn how to perform symbolic execution on real-world binaries by fusing concrete and symbolic execution"
+preview: "Learn how to symbolically execute real-world binaries by fusing concrete and symbolic execution"
 ---
 
 Today we are going to talk about an exciting new feature that we have recently released on [angr's master](https://github.com/angr/angr/commit/fe20116e8dc2aef94d0849439ff9f12a39000dfe): Symbion, a brand new exploration technique aimed to overcome some of the complexities that real-world programs exhibit and that can't or are not currently modeled in our symbolic engine.
@@ -172,7 +172,7 @@ The idea is to let the binary unpack itself and reach concretely the position wh
 However, this binary is packed, and the memory there will be overwritten by the unpacking process.  Software breakpoints, like the ones used by GDB, will be overwritten as well.
 Instead, we manually reverse-engineer the binary and determine that we can execute from the beginning of the program until ```0x85b853``` to have a new stub available at ```0x45b97f``` and eventually wait for 4 breakpoint hits to this address to have our unpacked code at ```0x400cd6```.
 
-Let's put this into code!  
+Let's put this into code!
 
 ```python
 import subprocess
@@ -334,7 +334,7 @@ The current version of Symbion is a very basic implementation of the interesting
 4. Exciting real world demos! :-)
 
 # Conclusions
-The presented example showed how we leverage Symbion to discover the malware configuration that eventually trigger a specific action of interest in the binary. We accomplished that by strategically skipping the initial phase of malware unpacking delegating its execution to the concrete environment, then we synchronized the state of the unpacked program inside angr and by declaring part of memory symbolic and levereging symbolic execution we discover the correct value to avoid the malware evasion and trigger the dropping of the second stage.   
+The presented example showed how we leverage Symbion to discover the malware configuration that eventually trigger a specific action of interest in the binary. We accomplished that by strategically skipping the initial phase of malware unpacking delegating its execution to the concrete environment, then we synchronized the state of the unpacked program inside angr and by declaring part of memory symbolic and levereging symbolic execution we discover the correct value to avoid the malware evasion and trigger the dropping of the second stage.
 
 The flexibility of the designed interface should open the door to different implementations of *ConcreteTargets* and the building of new tools that will let analysts to combine these concrete and symbolic analyses in new and exciting ways.
 
