@@ -1,36 +1,32 @@
 ---
 title: "Experimental Java, Android, and JNI support in angr"
-date: 2019-04-16T19:41:03-08:00
+date: 2019-04-14T15:48:59-08:00
 draft: true
-authors:
-  - anton00b
-  - conand
-tags:
-  - tutorial
-  - extending_angr
+authors: ["anton00b", "conand", "phate"]
+tags: ["announcements", "tutorial", "extending_angr"]
 preview: "angr can now symbolically execute Java code and Android apps!"
 ---
 
 angr can now symbolically execute Java code and Android apps!
-This includes java code and Android apps using a combination of compiled Java code and native (C/C++) code.
+This also includes Android apps using a combination of compiled Java and native (C/C++) code.
 
-This is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer, Sebastiano Mariani, Ruoyu (Fish) Wang, Antonio Bianchi, and Andrea Continella. (XXX links)
+This is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer ([thrsten](https://github.com/thrsten)), Sebastiano Mariani ([phate](https://github.com/phat3)), Ruoyu Wang ([fish](https://ruoyuwang.me/)), Antonio Bianchi ([anton00b](https://cs.uiowa.edu/people/antonio-bianchi)), and Andrea Continella ([conand](https://conand.me/)).
 
-This has been implemented by lifting the compiled Java code (Java or DEX bytecode) using Soot (specifically, the python wrapper: pysoot).
-Pysoot extract a fully serialiable (just use `pickle`) interface from Android apps and Java code (unfortunately, as of now, it only works on Linux).
-The generated IR is then used by a new angr engine able to run code in Soot IR: XXX.
-This engine automatically switches to executing native code if the Java code calls any native method (using the JNI interface).
+We implemented Java support by lifting the compiled Java code, both Java and DEX bytecode, leveraging our Soot python wrapper [pysoot](https://github.com/angr/pysoot).
+Pysoot extracts a fully serializable interface from Android apps and Java code (unfortunately, as of now, it only works on Linux).
+We then leverage the generated IR in a new angr engine able to run code in Soot IR: XXX.
+This engine also automatically switches to executing native code if the Java code calls any native method using the JNI interface.
 
-Together with the symbolic execution, also some static analysis has been implemented in angr, specifically a CFG (see: XXX, or maybe an exampleXXX).
-To solve string related constraints a string solver (CVC4) is used.
+Together with the symbolic execution, we also implemented some basic static analysis, specifically a CFG (see: XXX, or maybe an exampleXXX).
+Moreover, we added support for string constraints solving, modyfing claripy and using the CVC4 solver.
 
 **WARNING: Java support is experimental!**
-Do not expect to be able to run Java code or Android apps out of the box!
+You might encounter issues while runing Java or Android apps. Please, report any bug!
 
 ## How to install
-Install angr using the angr-dev repository in a virtualenv.
-In the same virtualenv run:
-```
+Enabling Java support requires few more steps than typical angr installation.
+Assuming you installed [angr-dev](https://github.com/angr/angr-dev), activate the virtualenv and run:
+```bash
 # CVC4 is needed for String solving
 pip install cvc4-solver
 # install pysoot
@@ -44,6 +40,8 @@ git clone https://github.com/pysmt/pysmt.git
 pip install -e .
 cd ..
 ```
+
+## APK Analysis
 Analyzing Android apps requires the Android SDK.
 Typically, it is installed in `<HOME>/Android/SDK/platforms/platform-XX/android.jar`, where `XX` is the Android SDK version used by the app you want to analyze (you may want to install all the platforms required by the Android apps you want to analyze).
 
