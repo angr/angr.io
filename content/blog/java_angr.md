@@ -41,7 +41,7 @@ The complete `angr` code is available [here](https://github.com/angr/angr-doc/tr
 A typical approach would require reversing the Java code and the native code used to implement the game.
 However, if you are lazy, you can just use `angr` to, starting from the 5 numbers outputted by the game, automatically compute the 3 numbers of the solution.
 
-This is the source code implementing one round of the game
+This is the source code implementing one round of the game:
 ```Java
 Random rnd = new Random();
 int c1,c2,c3,c4,c5;
