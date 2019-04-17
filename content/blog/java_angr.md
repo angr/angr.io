@@ -1,7 +1,7 @@
 ---
 title: "Experimental Java, Android, and JNI support in angr"
 date: 2019-04-14T15:48:59-08:00
-draft: true
+draft: false
 authors: ["anton00b", "conand", "phate"]
 tags: ["announcements", "tutorial", "extending_angr"]
 preview: "angr can now symbolically execute Java code and Android apps!"
@@ -10,13 +10,14 @@ preview: "angr can now symbolically execute Java code and Android apps!"
 `angr` can now symbolically execute Java code and Android apps!
 This also includes Android apps using a combination of compiled Java and native (C/C++) code.
 
-This is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer ([thrsten](https://github.com/thrsten)), Sebastiano Mariani ([phate](https://github.com/phat3)), Ruoyu Wang ([fish](https://ruoyuwang.me/)), Antonio Bianchi ([anton00b](https://twitter.com/anton00b)), and Andrea Continella ([conand](https://conand.me/)).
+This is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer ([thrsten](https://github.com/thrsten)), Sebastiano Mariani ([phate](https://github.com/phat3)), Ruoyu Wang ([fish](https://ruoyuwang.me/)), Antonio Bianchi ([anton00b](https://twitter.com/anton00b)), and Andrea Continella ([conand](https://twitter.com/_conand)).
 
 We implemented Java support by lifting the compiled Java code, both Java and DEX bytecode, leveraging our Soot python wrapper [pysoot](https://github.com/angr/pysoot).
 `pysoot` extracts a fully serializable interface from Android apps and Java code (unfortunately, as of now, it only works on Linux).
-![Pysoot Architecture](https://github.com/angr/pysoot/blob/master/pysoot_arch.png "Pysoot Architecture")
 
-We then leverage the generated IR in a new angr engine able to run code in Soot IR: [engine.py](https://github.com/angr/angr/blob/master/angr/engines/soot/engine.py).
+{{< img "Pysoot Architecture" "pysoot_arch.png" >}}
+
+We then leverage the generated IR in a new angr engine able to such code: [engine.py](https://github.com/angr/angr/blob/master/angr/engines/soot/engine.py).
 This engine is also able to automatically switch to executing native code if the Java code calls any native method using the JNI interface.
 
 Together with the symbolic execution, we also implemented some basic static analysis, specifically a basic CFG reconstruction analysis.
@@ -39,7 +40,7 @@ We will now focus on how to solve one round of the game using `angr`.
 The complete `angr` code is available [here](https://github.com/angr/angr-doc/tree/master/examples/ictf2017_javaisnotfun).
 
 A typical approach would require reversing the Java code and the native code used to implement the game.
-However, if you are lazy, you can just use `angr` to, starting from the 5 numbers outputted by the game, automatically compute the 3 numbers of the solution.
+However, if you are lazy, you can just use `angr` to, starting from the 5 numbers printed by the game, automatically compute the 3 numbers of the solution.
 
 This is the source code implementing one round of the game:
 ```Java
@@ -235,12 +236,13 @@ for s in solutions:
 ## Limitations and Future Work
 As mentioned before **Java support is experimental!**
 
-These are many things that should be improved, for instance:
-- Move away from `pysoot` or, at least:
-  - Make it compatible with Windows, OSX, ...
-  - Do not use Jython and Pickle (but something more efficient, such as `protobuf`) to obtain the Soot IR in Python
-- Implement more static analyses, including, data-flow, slicing, ... (this is currently work-in-progress)
-- Many many more simprocedures to model the _HUGE_ Java SDK
-- ...
+There are many things that should be improved, for instance:
 
-_Welcome from the community is highly encouraged! Pull requests are very welcomed!_
+* Move away from `pysoot` or, at least:
+  * Make it compatible with Windows, OSX, ...
+  * Do not use Jython and Pickle (but something more efficient, such as `protobuf`) to obtain the Soot IR in Python
+* Implement more static analyses, including, data-flow, slicing, ... (this is currently work-in-progress)
+* Many many more simprocedures to model the _HUGE_ Java SDK
+* ...
+
+_Contribution from the community is highly encouraged! Pull requests are very welcomed!_
