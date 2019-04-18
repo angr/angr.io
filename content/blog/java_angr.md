@@ -243,7 +243,7 @@ There are many things that should be improved, for instance:
   * Make it compatible with Windows, OSX, ...
   * Do not use Jython and Pickle (but something more efficient, such as `protobuf`) to obtain the Soot IR in Python
 * Implement more static analyses, including, data-flow, slicing, ... (this is currently work-in-progress)
-* Many many more simprocedures to model the _HUGE_ Java SDK
+* Many many more simprocedures to model the _HUGE_ Java/Android framework
 * ...
 
 _Contribution from the community is highly encouraged! Pull requests are very welcome!_
