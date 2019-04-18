@@ -1,48 +1,52 @@
 ---
-title: "Experimental Java, Android, and JNI support in angr"
+title: "experimental java, android, and jni support in angr"
 date: 2019-04-14T15:48:59-08:00
 draft: false
 authors: ["anton00b", "conand", "phate"]
-tags: ["announcements", "tutorial", "extending_angr"]
+tags: ["announcements", "tutorial", "extending_angr", "java", "android"]
 preview: "angr can now symbolically execute Java code and Android apps!"
 ---
 
-`angr` can now symbolically execute Java code and Android apps!
-This also includes Android apps using a combination of compiled Java and native (C/C++) code.
+angr can now symbolically execute Java code and Android apps, including Android apps incorporating both compiled Java and native (C/C++) code!
 
-This is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer ([thrsten](https://github.com/thrsten)), Sebastiano Mariani ([phate](https://github.com/phat3)), Ruoyu Wang ([fish](https://ruoyuwang.me/)), Antonio Bianchi ([anton00b](https://twitter.com/anton00b)), and Andrea Continella ([conand](https://twitter.com/_conand)).
+This project is the result of a multi-year effort by (in no particular order): Thorsten Eisenhofer ([thrsten](https://github.com/thrsten)), Sebastiano Mariani ([phate](https://github.com/phat3)), Ruoyu Wang ([fish](https://ruoyuwang.me/)), Antonio Bianchi ([anton00b](https://twitter.com/anton00b)), and Andrea Continella ([conand](https://twitter.com/_conand)).
 
-We implemented Java support by lifting the compiled Java code, both Java and DEX bytecode, leveraging our Soot python wrapper [pysoot](https://github.com/angr/pysoot).
-`pysoot` extracts a fully serializable interface from Android apps and Java code (unfortunately, as of now, it only works on Linux).
+Enabling Java support requires a few more steps than a typical angr installation.
+To get started, we recommend looking through the detailed installation instructions and a list of examples available in the official [angr documentation](https://docs.angr.io/advanced-topics/java_support).
+
+**WARNING: Java support is still experimental!**
+You may encounter issues while analyzing Java or Android apps. Please report any bugs on the respective git repository in the [angr project](https://github.com/angr/). Pull requests are also welcome!
+
+## Implementation
 
 {{< img "Pysoot Architecture" "pysoot_arch.png" >}}
 
-We then leverage the generated IR in a new angr engine able to such code: [engine.py](https://github.com/angr/angr/blob/master/angr/engines/soot/engine.py).
-This engine is also able to automatically switch to executing native code if the Java code calls any native method using the JNI interface.
+Java support relies primarily on our new Soot python wrapper, [pysoot](https://github.com/angr/pysoot), to lift both Java and DEX bytecode.
+`pysoot` lifts both Java and DEX bytecode, as well as extracts a fully serializable interface from Android apps and Java code.
+Unfortunately, as of now, it only works on Linux.
 
-Together with the symbolic execution, we also implemented some basic static analysis, specifically a basic CFG reconstruction analysis.
-Moreover, we added support for string constraint solving, modifying claripy and using the CVC4 solver.
+We then leverage the generated IR in a [new angr engine](https://github.com/angr/angr/blob/master/angr/engines/soot/engine.py) able to interpret such code.
+This engine is also able to automatically switch to executing native code if a native method is called through the JNI interface.
 
-Enabling Java support requires few more steps than typical angr installation.
-Detailed installation instructions and a list of examples are available in the official [angr documentation](https://docs.angr.io/advanced-topics/java_support).
-
-**WARNING: Java support is experimental!**
-You might encounter issues while running Java or Android apps. Please, report any bug! Pull requests are very welcomed.
+Along with symbolic execution, we have also implemented some basic static analysis, specifically a basic CFG reconstruction analysis.
+Moreover, we added support for string constraint solving by integrating CVC4's string constraint abilities into `claripy`.
 
 ## Solving a CTF challenge
-The challenge `javaisnotfun` from `iCTF 2017` contains a game, implemented as mixed Java/C code.
+
+The challenge `javaisnotfun` from iCTF 2017 is a game implemented in mixed Java/C code.
 You can find its source code [here](https://github.com/angr/angr-doc/blob/master/examples/ictf2017_javaisnotfun/challenge/src.tar?raw=true) and a writeup (in Chinese) [here](https://ctftime.org/writeup/5964).
 
 The challenge starts with a challenge-response game in which 5 random numbers are shown to the user, and the user has to reply with 3 numbers.
 Solving five rounds of the game allows the attacker to trigger the challenge vulnerability.
 
-We will now focus on how to solve one round of the game using `angr`.
-The complete `angr` code is available [here](https://github.com/angr/angr-doc/tree/master/examples/ictf2017_javaisnotfun).
+In this example, we will focus on how to solve one round of the game using angr.
+The complete angr code is available [here](https://github.com/angr/angr-doc/tree/master/examples/ictf2017_javaisnotfun).
 
 A typical approach would require reversing the Java code and the native code used to implement the game.
-However, if you are lazy, you can just use `angr` to, starting from the 5 numbers printed by the game, automatically compute the 3 numbers of the solution.
+However, we can now use angr to automatically compute the 3 numbers of the solution!
 
 This is the source code implementing one round of the game:
+
 ```Java
 Random rnd = new Random();
 int c1,c2,c3,c4,c5;
@@ -140,7 +144,6 @@ if(! (getInt() == c3)){
 JNIEXPORT int JNICALL Java_NotFun_magic000(JNIEnv *env, jobject thisObj, jint n) {
    return n*3 + 1;
 }
-
 JNIEXPORT int JNICALL Java_NotFun_magic0(JNIEnv *env, jobject thisObj, jint n) {
    return (n<<1) + 4;
 }
@@ -172,20 +175,18 @@ JNIEXPORT int JNICALL Java_NotFun_magic9(JNIEnv *env, jobject thisObj, jint n) {
    return (n>>1) + 1;
 }
 ```
-Java code and native C code communicate using the JNI interface.
 
-Let's create, using `angr`, a function able to compute the 3 response values, given the 5 random challenge values.
-First of all we need to create an `angr` project.
+Let's create, using angr, a function able to compute the 3 response values, given the 5 random challenge values.
+First of all we need to create an angr `Project`.
 ```Python
 binary_path = os.path.join(self_dir, "bin/service.jar")
 jni_options = {'jni_libs': ['libnotfun.so']}
 project = angr.Project(binary_path, main_opts=jni_options)
 ```
-As you can see, we manually specify that the `jar` file uses a native library `linotfun.so`.
-
-
+As you can see, we manually specify that the `jar` file uses a native library, `libnotfun.so`.
 We then set up a few hooks.
 Since these hooks are in Java, we specify their addresses using the class `SootMethodDescriptor`.
+
 ```Python
 project.hook(SootMethodDescriptor(class_name="java.util.Random", name="nextInt", params=('int',)).address(), Random_nextInt())
 project.hook(SootMethodDescriptor(class_name="java.lang.Integer", name="valueOf", params=('int',)).address(), Dummy_valueOf())
@@ -207,6 +208,7 @@ See the [full solution](https://github.com/angr/angr-doc/tree/master/examples/ic
 
 Finally, we start symbolically executing the program step-by-step.
 We prune paths reaching the `gameFail()` method, while we stash paths solving one round of the game (formally, reaching basic block 30 of the method `game()`).
+When run, `numeric_solutions` will contain the 3 response values.
 ```Python
 print("="*10 + " SYMBOLIC EXECUTION STARTED")
 while(len(simgr.active)>0):
@@ -230,11 +232,10 @@ for s in solutions:
     assert len(es) == 1
     numeric_solutions.append(es[0])
 ```
-`numeric_solutions` will contain the 3 response values.
 
 
 ## Limitations and Future Work
-As mentioned before **Java support is experimental!**
+As mentioned before, **Java support is experimental!**
 
 There are many things that should be improved, for instance:
 
@@ -245,4 +246,4 @@ There are many things that should be improved, for instance:
 * Many many more simprocedures to model the _HUGE_ Java SDK
 * ...
 
-_Contribution from the community is highly encouraged! Pull requests are very welcomed!_
+_Contribution from the community is highly encouraged! Pull requests are very welcome!_
