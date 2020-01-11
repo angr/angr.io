@@ -101,6 +101,8 @@ Translating this idea into the script, let's say we want to reach ```0x4007a4```
 ```python
 # Create the state at the beginning of the program
 entry_state = p.factory.entry_state()
+entry_state.options.add(angr.options.SYMBION_SYNC_CLE)
+entry_state.options.add(angr.options.SYMBION_KEEP_STUBS_ON_SYNC)
 
 # Create a simulation manager to hold this exploration
 simgr = p.factory.simgr(entry_state)
@@ -128,7 +130,7 @@ Concretization is triggered by the use of the *concretize* argument passed to Sy
 # Instructing angr to use the Symbion exploration technique to bring the
 # concrete process to the address 'BINARY_EXECUTION_END'
 simgr.use_technique(angr.exploration_techniques.Symbion(find=[BINARY_EXECUTION_END],
-                                  concretize = [(address,my_variable)]))
+                                  memory_concretize = [(address,my_variable)]))
 ```
 
 # Example
@@ -207,11 +209,13 @@ p = angr.Project(binary_x64, concrete_target=avatar_gdb,
                              use_sim_procedures=True)
 
 entry_state = p.factory.entry_state()
+entry_state.options.add(angr.options.SYMBION_SYNC_CLE)
+entry_state.options.add(angr.options.SYMBION_KEEP_STUBS_ON_SYNC)
+
 simgr = project.factory.simgr(state)
 
 ## Now, let's the binary unpack itself
-simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x85b853],
-                                                        concretize = []))
+simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x85b853]))
 exploration = simgr.run()
 new_concrete_state = exploration.stashes['found'][0]
 
@@ -224,8 +228,7 @@ for i in xrange(0,4):
 
 ## Reaching the first decision point
 simgr = project.factory.simgr(new_concrete_state)
-simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x400cd6],
-                                                        concretize = []))
+simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x400cd6])
 exploration = simgr.run()
 new_concrete_state = exploration.stashes['found'][0]
 ```
@@ -278,7 +281,8 @@ simgr = project.factory.simgr(new_symbolic_state)
 # Concretizing the solution to reach the interesting behavior in the memory
 # of the concrete process and resume until the end of the execution.
 simgr.use_technique(angr.exploration_techniques.Symbion(find=[BINARY_EXECUTION_END],
-                              concretize = [(symbolic_buffer_address,arg0)]))
+                              memory_concretize = [(symbolic_buffer_address,arg0)], 
+                              register_concretize=[]))
 
 exploration = simgr.run()
 
@@ -330,8 +334,7 @@ The current version of Symbion is a very basic implementation of the interesting
 
 1. Support for a **snapshot engine** that empowers user to restore a specific state of the concrete process.
 2. Support for a **watchpoint mechanism** to support the stopping of the concrete execution as soon as it touches a symbolic defined portion of memory.
-3. Support for other architectures ( yeah, right now just x86 is supported! ).
-4. Exciting real world demos! :-)
+3. Exciting real world demos! :-)
 
 # Conclusions
 The presented example showed how we leverage Symbion to discover the malware configuration that eventually trigger a specific action of interest in the binary. We accomplished that by strategically skipping the initial phase of malware unpacking delegating its execution to the concrete environment, then we synchronized the state of the unpacked program inside angr and by declaring part of memory symbolic and levereging symbolic execution we discover the correct value to avoid the malware evasion and trigger the dropping of the second stage.
