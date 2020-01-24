@@ -34,3 +34,6 @@ pygmentsUseClasses = true
 
 [permalinks]
   top = "/:filename/"
+
+[markup.goldmark.renderer]
+unsafe = true
