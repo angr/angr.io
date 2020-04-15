@@ -212,7 +212,7 @@ entry_state = p.factory.entry_state()
 entry_state.options.add(angr.options.SYMBION_SYNC_CLE)
 entry_state.options.add(angr.options.SYMBION_KEEP_STUBS_ON_SYNC)
 
-simgr = project.factory.simgr(state)
+simgr = p.factory.simgr(state)
 
 ## Now, let's the binary unpack itself
 simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x85b853]))
@@ -221,13 +221,13 @@ new_concrete_state = exploration.stashes['found'][0]
 
 # Hit the new stub 4 times before having our unpacked code at 0x400cd6
 for i in xrange(0,4):
-    simgr = project.factory.simgr(new_concrete_state)
+    simgr = p.factory.simgr(new_concrete_state)
     simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x85b853]))
     exploration = simgr.run()
     new_concrete_state = exploration.stashes['found'][0]
 
 ## Reaching the first decision point
-simgr = project.factory.simgr(new_concrete_state)
+simgr = p.factory.simgr(new_concrete_state)
 simgr.use_technique(angr.exploration_techniques.Symbion(find=[0x400cd6])
 exploration = simgr.run()
 new_concrete_state = exploration.stashes['found'][0]
@@ -276,7 +276,7 @@ Last step: now that we hold the value of the configuration to trigger that actio
 print("[3]Executing binary concretely with solution found until the end " +
 hex(BINARY_EXECUTION_END))
 
-simgr = project.factory.simgr(new_symbolic_state)
+simgr = p.factory.simgr(new_symbolic_state)
 
 # Concretizing the solution to reach the interesting behavior in the memory
 # of the concrete process and resume until the end of the execution.
@@ -327,7 +327,7 @@ p = angr.Project(binary_x64, concrete_target=avatar_gdb,
                              use_sim_procedures=True)  # <---- Using SimProcedures
 ```
 
-The *Concrete state plugin* tries to update their addresses in the angr's internal SimProcedures table ( i.e. ```project._sim_procedures``` ) in order to avoid to execute libraries code that can sometimes get the *VEX engine* in troubles ( e.g. [dirty calls](https://github.com/angr/angr/blob/master/angr/engines/vex/dirty.py) not implemented ) or lead to a early state explosion.
+The *Concrete state plugin* tries to update their addresses in the angr's internal SimProcedures table ( i.e. ```p._sim_procedures``` ) in order to avoid to execute libraries code that can sometimes get the *VEX engine* in troubles ( e.g. [dirty calls](https://github.com/angr/angr/blob/master/angr/engines/vex/dirty.py) not implemented ) or lead to a early state explosion.
 
 # Future Works
 The current version of Symbion is a very basic implementation of the interesting concept of mixing concrete and symbolic execution to support analysis of very complex target. We have plenty of exciting ideas to push this project:
