@@ -349,7 +349,7 @@ push the boundaries of program analysis even further.
 Stay tuned for more example and updates about the project!
 
 # Citations
-If you use Symbion in your paper please cite the following paper describing it:
+If you use Symbion in your research please cite the following paper describing it:
 
 @inproceedings{gritti2020symbion,
  author = {Gritti, Fabio and Fontana, Lorenzo and Gustafson, Eric and Pagani, Fabio and Continella, Andrea and Kruegel, Christopher and Vigna, Giovanni},
