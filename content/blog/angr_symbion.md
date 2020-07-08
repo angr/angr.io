@@ -347,3 +347,14 @@ programs. We are excited to release this to the community, to see how you all wi
 push the boundaries of program analysis even further.
 
 Stay tuned for more example and updates about the project!
+
+# Citations
+If you use Symbion in your paper please cite the following paper describing it:
+
+@inproceedings{gritti2020symbion,
+ author = {Gritti, Fabio and Fontana, Lorenzo and Gustafson, Eric and Pagani, Fabio and Continella, Andrea and Kruegel, Christopher and Vigna, Giovanni},
+ booktitle = {Proceedings of the IEEE Conference on Communications and Network Security (CNS)},
+ month = {June},
+ title = {SYMBION: Interleaving Symbolic with Concrete Execution},
+ year = {2020}
+}
