@@ -9,6 +9,8 @@ preview: "Learn how to symbolically execute real-world binaries by fusing concre
 
 Today we are going to talk about an exciting new feature that we have recently released on [angr's master](https://github.com/angr/angr/commit/fe20116e8dc2aef94d0849439ff9f12a39000dfe): Symbion, a brand new exploration technique aimed to overcome some of the complexities that real-world programs exhibit and that can't or are not currently modeled in our symbolic engine.
 
+Before moving on the interesting details remember: if you use Symbion in your research please cite the [paper](https://ieeexplore.ieee.org/abstract/document/9162164)! :D
+
 # Motivation
 
 When we leverage a symbolic execution tool such as angr to analyze a program, we depend on a model of the operating system and libraries to make the analysis tractable ( in fact trying to symbolically execute everything would lead immediately to a state explosion).
@@ -349,8 +351,6 @@ push the boundaries of program analysis even further.
 Stay tuned for more example and updates about the project!
 
 # Citations
-If you use Symbion in your research please cite the following paper describing it:
-
 @inproceedings{gritti2020symbion,
  author = {Gritti, Fabio and Fontana, Lorenzo and Gustafson, Eric and Pagani, Fabio and Continella, Andrea and Kruegel, Christopher and Vigna, Giovanni},
  booktitle = {Proceedings of the IEEE Conference on Communications and Network Security (CNS)},
