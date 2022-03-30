@@ -3,8 +3,18 @@
 The angr website and blog are generated with the Hugo static site generator.
 
 ## Previewing Locally
+
+On your host system, install Hugo, and Python requirements in requirements.txt, then:
+
 ```
 make
+```
+
+Alternatively, if you have Docker installed:
+
+```
+docker build -t angr-website .
+docker run -it --rm -v $PWD:/work -w /work --net=host angr-website make
 ```
 
 ## Checking for Out Of Date Code
