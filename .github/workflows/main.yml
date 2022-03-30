@@ -1,0 +1,32 @@
+on: [push, pull_request]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Clone Tree
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: sudo apt-get install hugo
+
+    - name: Build
+      run: hugo
+
+    - name: Generate CNAME
+      run: |
+        pushd public
+        echo "angr.io" > CNAME
+        echo "www.angr.io" >> CNAME
+        echo "angr.re" >> CNAME
+        echo "www.angr.re" >> CNAME
+        echo "angr.horse" >> CNAME
+        echo "www.angr.horse " >> CNAME
+
+    - name: Deploy
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./public
+        force_orphan: true
