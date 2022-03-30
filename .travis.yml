@@ -1,17 +1,11 @@
 sudo: required
 dist: xenial
 env:
-- PY=e ANGR_ROOT=~/angr-dev
+- PY=e
 install:
 - sudo apt-get update
-- sudo apt-get install -y python3 python3-pip python3-venv
 - sudo snap install hugo
-- pushd ~
-- git clone -q https://github.com/angr/angr-dev
-- cd angr-dev
-- python3 -m venv angr && source angr/bin/activate && ./setup.sh -i -w -b "$BRANCH" -s -c -C
-- popd
-- make install && make public
+- make public
 script: make build
 deploy:
   provider: script
