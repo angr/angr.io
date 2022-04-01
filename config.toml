@@ -9,21 +9,25 @@ pygmentsUseClasses = true
   url = "/"
   weight = 1
 [[menu.main]]
-  name = "blog"
-  url = "/blog"
+  name = "code"
+  url = "https://github.com/angr"
   weight = 2
 [[menu.main]]
   name = "docs"
   url = "http://docs.angr.io/"
   weight = 3
 [[menu.main]]
-  name = "code"
-  url = "https://github.com/angr"
+  name = "api"
+  url = "http://api.angr.io/"
   weight = 4
+[[menu.main]]
+  name = "blog"
+  url = "/blog"
+  weight = 5
 [[menu.main]]
   name = "get involved!"
   url = "/#contact"
-  weight = 5
+  weight = 6
 
 [taxonomies]
   tag = "tags"
