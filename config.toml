@@ -1,4 +1,4 @@
-baseURL = "https://angr.github.io/"
+baseURL = "https://angr.io/"
 languageCode = "en-us"
 title = "angr"
 pygmentsCodeFences = true
