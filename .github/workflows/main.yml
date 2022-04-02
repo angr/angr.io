@@ -23,6 +23,9 @@ jobs:
         echo "angr.horse" >> CNAME
         echo "www.angr.horse " >> CNAME
 
+    - name: Add redirects to new API documentation location
+      run: cp -r api-doc public
+
     - name: Deploy
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v3
