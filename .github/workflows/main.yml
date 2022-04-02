@@ -23,14 +23,6 @@ jobs:
         echo "angr.horse" >> CNAME
         echo "www.angr.horse " >> CNAME
 
-    # Temporarily integrate API docs for domain migration
-    - name: Integrate API docs
-      run: |
-        pushd /tmp
-        git clone https://github.com/angr/angr.github.io
-        popd
-        mv /tmp/angr.github.io/api-doc public/api-doc
-
     - name: Deploy
       if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: peaceiris/actions-gh-pages@v3
