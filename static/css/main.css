@@ -121,7 +121,7 @@ a:visited {
 }
 
 #bodycolumn {
-    max-width: 900px;
+    max-width: 992px;
     padding-top: 20px;
     padding-left: 10px;
     padding-right: 10px;
@@ -282,27 +282,29 @@ a:visited {
 .card {
     flex: 1 0 500px;
     box-sizing: border-box;
-    margin: .5em .5em;
+    margin: .25em .25em;
     padding: 0.5em;
     background-color: #eee;
-    box-shadow: 2px 2px 2px 0 rgba(0, 0, 0, 0.2);
-    border: 1px solid #ccc;
     border-radius: 10px;
-    text-align: center;
+    font-size: 0.9em;
+    display: flex;
+}
+
+.card-icon {
+    padding: 1em 0.5em;
+    font-size: 1.17em;
 }
 
 .card h3 {
     font-weight: normal;
 }
 
+.card p {
+    padding:  0;
+}
+
 @media screen and (min-width: 768px) {
     .card {
         max-width: calc(50% -  1em);
-    }
-}
-
-@media screen and (min-width: 992px) {
-    .card {
-        max-width: calc(25% - 1em);
     }
 }
