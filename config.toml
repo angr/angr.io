@@ -14,11 +14,11 @@ pygmentsUseClasses = true
   weight = 2
 [[menu.main]]
   name = "docs"
-  url = "http://docs.angr.io/"
+  url = "https://docs.angr.io/"
   weight = 3
 [[menu.main]]
   name = "api"
-  url = "http://api.angr.io/"
+  url = "https://api.angr.io/"
   weight = 4
 [[menu.main]]
   name = "blog"
