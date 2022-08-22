@@ -34,7 +34,6 @@ pygmentsUseClasses = true
   author = "authors"
 
 [params]
-  announcement = "The angr team is offering a two-day training on August 15-16th! Come to DEFCON 30 and become an angr expert. [Click here to learn more.](https://defcontrainings.myshopify.com/products/fish-wang-customizable-binary-analysis-using-angr-to-its-full-potential)"
 
 [permalinks]
   top = "/:filename/"
