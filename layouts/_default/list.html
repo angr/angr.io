@@ -1,6 +1,6 @@
 {{ partial "header.html" . }}
 {{ range .Data.Pages }}
-<a href="{{ .URL }}" class="post" >
+<a href="{{ .Permalink }}" class="post" >
   <div class="bar-appears">
     <div class="list-main">
       <span class="list-title">{{ .Title }}</span>

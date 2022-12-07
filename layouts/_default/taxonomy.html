@@ -1,7 +1,7 @@
 {{ partial "header.html" . }}
 <h1 style="display: inline">{{ .Data.Singular }}: {{ replace .Data.Term "_" " " }}</h1><br>
 {{ range .Data.Pages }}
-<a href="{{ .URL }}" class="post" >
+<a href="{{ .Permalink }}" class="post" >
   <div class="bar-appears">
     <div class="list-main">
       <span class="list-title">{{ .Title }}</span>
