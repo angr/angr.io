@@ -3,6 +3,7 @@ languageCode = "en-us"
 title = "angr"
 pygmentsCodeFences = true
 pygmentsUseClasses = true
+disableKinds = ["RSS"]
 
 [[menu.main]]
   name = "home"
