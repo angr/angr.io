@@ -18,17 +18,13 @@ disableKinds = ["RSS"]
   url = "https://docs.angr.io/"
   weight = 3
 [[menu.main]]
-  name = "api"
-  url = "https://api.angr.io/"
-  weight = 4
-[[menu.main]]
   name = "blog"
   url = "/blog"
-  weight = 5
+  weight = 4
 [[menu.main]]
   name = "get involved!"
   url = "/#contact"
-  weight = 6
+  weight = 5
 
 [taxonomies]
   tag = "tags"
