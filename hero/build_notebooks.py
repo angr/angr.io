@@ -12,8 +12,8 @@ final expression's repr (the `Out[n]`), exactly like IPython would. The result
 is written to src/assets/hero/notebooks.json, which the website renders as a
 static, syntax-highlighted notebook carousel.
 
-Needs angr + the fauxware binary. Run from a directory where `fauxware`
-resolves (or set FAUXWARE=/path):
+Needs angr + the test binaries (fauxware, go/age, rust/grex) from
+angr/binaries' tests/x86_64. Run from that directory (or set FAUXWARE_DIR=/path):
 
     cd /path/to/binaries/tests/x86_64
     python /path/to/angr.io/hero/build_notebooks.py
@@ -56,17 +56,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEMOS = os.path.join(HERE, "demos")
 OUT = os.path.join(HERE, "..", "src", "assets", "hero", "notebooks.json")
 
-# Where the fauxware test binary lives, so demos can `angr.Project("fauxware")`
-# no matter what directory you run this from. Override with FAUXWARE_DIR.
+# angr/binaries' tests/x86_64, so demos can `angr.Project("fauxware")` (and
+# "go/age", "rust/...") no matter what directory you run this from. Override
+# with FAUXWARE_DIR.
 BIN_DIR = os.environ.get(
     "FAUXWARE_DIR",
     os.path.normpath(os.path.join(HERE, "..", "..", "binaries", "tests", "x86_64")),
 )
 
 # Demos to include, in carousel order. Each maps to demos/<id>.py.
-ORDER = ["decompile", "disasm", "symexec"]
+ORDER = ["decompile", "go_decompile", "rust_decompile", "disasm", "symexec"]
 
-_META = re.compile(r"#\s*title:\s*(.*)", re.IGNORECASE)
+_META = re.compile(r"#\s*(title|terminal):\s*(.*)", re.IGNORECASE)
 _SGR = re.compile(r"\x1b\[([0-9;]*)m")
 
 
@@ -106,24 +107,24 @@ def ansi_to_html(text):
 
 
 def parse(path):
-    """Return (title, body_lines).
+    """Return ({"title": ..., "terminal": ...}, body_lines).
 
-    Only the `# title:` meta line is removed; all other comments are kept so
-    they show up in the notebook as the annotations they are.
+    Only the `# title:` / `# terminal:` meta lines are removed; all other
+    comments are kept so they show up in the notebook as the annotations they are.
     """
-    title = ""
+    meta = {}
     body = []
     for ln in open(path).read().splitlines():
         m = _META.match(ln)
-        if m and not title:
-            title = m.group(1).strip()
+        if m and m.group(1).lower() not in meta:
+            meta[m.group(1).lower()] = m.group(2).strip()
             continue
         body.append(ln)
     while body and body[0].strip() == "":
         body.pop(0)
     while body and body[-1].strip() == "":
         body.pop()
-    return title, body
+    return meta, body
 
 
 def cells_of(body):
@@ -164,9 +165,10 @@ def run_cell(ns, src):
 
 
 def run_demo(path):
-    title, body = parse(path)
+    meta, body = parse(path)
     ns = {}
-    exec("import logging; logging.disable(logging.WARNING)", ns)
+    # Hidden setup, not part of the shown session: keep angr's log records out of the output.
+    exec("import logging; logging.disable(logging.CRITICAL)", ns)
 
     cells = []
     for n, src in enumerate(cells_of(body), start=1):
@@ -183,7 +185,9 @@ def run_demo(path):
 
     return {
         "id": os.path.splitext(os.path.basename(path))[0],
-        "title": title,
+        "title": meta.get("title", ""),
+        # shown in the window title bar as "<terminal> — ipython"
+        "terminal": meta.get("terminal", "fauxware"),
         "cells": cells,
     }
 
