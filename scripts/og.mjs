@@ -26,7 +26,7 @@ p{margin-top:34px;font-size:30px;color:#9aa0ab;max-width:880px;line-height:1.4}
  <h1><span class="g">Demystify binaries.</span></h1>
  <p>The powerful, user-friendly Python platform for analyzing binaries. Decompilation, symbolic execution, and more in one scriptable toolkit.</p>
 </div></body></html>`;
-const b = await chromium.launch();
+const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
 const p = await (await b.newContext({viewport:{width:1200,height:630},deviceScaleFactor:1})).newPage();
 await p.setContent(html,{waitUntil:"networkidle"});
 await p.screenshot({path:"public/og.png"});

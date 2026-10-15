@@ -29,9 +29,9 @@ the Playwright browser in one idempotent step.
 ## Structure
 
 ```
-hero/            recorded-terminal demos for the hero (see hero/README.md)
+hero/            demo generators + the fauxware binaries (see hero/README.md)
 src/
-  assets/        logo, screenshots, hero notebooks (json) + CLI casts
+  assets/        logo, screenshots, generated notebooks (json), CLI casts, GUI shots
   components/    one .astro file per section (Hero, Features, …)
   data/          content: feature cards, code demos, ecosystem links
   layouts/       Base.astro — <head>, SEO/OG meta, theme init, scroll-reveal
@@ -40,20 +40,26 @@ src/
   styles/        global.css — design tokens, themes, components, animations
 ```
 
-## Hero & CLI demos
+## Demos: the hero and the showcase
 
-Both the hero and the CLI section are generated from **real angr scripts** in
-[`hero/demos/`](hero/demos/):
+The hero and the showcase section ("Any interface. Any language. Any
+analysis.") are generated from **real angr runs** driven by
+[`hero/`](hero/). The showcase is a 3 × 3 × 3 picker — CLI / IPython / GUI ×
+C / Go / Rust × decompile / disassemble / symbolic execution — over the same
+`fauxware` program built from each language:
 
-- The **hero** is a static IPython-notebook carousel, built by
+- **IPython** tiles (and the hero carousel) are static notebooks, built by
   `build_notebooks.py` → `src/assets/hero/notebooks.json`.
-- The **CLI section** is animated
+- **CLI** tiles are animated
   [asciinema-player](https://github.com/asciinema/asciinema-player) playback,
   built by `record_cli.py` → `src/assets/cli/*.cast` + `manifest.json`.
+- **GUI** tiles are angr-management screenshots (light + dark), taken headless
+  by `shoot_gui.py` → `src/assets/gui/*.png`.
 
 The generated artifacts are committed, so the site build never needs angr
 installed — only re-generating does. See [hero/README.md](hero/README.md) for the
-edit → regenerate → commit workflow (`npm run gen:hero` / `npm run gen:cli`).
+edit → regenerate → commit workflow (`npm run gen`, or `gen:hero` / `gen:cli` /
+`gen:gui`).
 
 ## Theming
 

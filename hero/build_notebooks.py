@@ -1,22 +1,21 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["angr"]
+# dependencies = ["angr[unicorn]"]
 # ///
 """
-Build the static IPython-notebook data shown in the angr.io hero.
+Build the static IPython-notebook data shown on angr.io (the hero carousel and
+the showcase's IPython tiles).
 
-Runs each demo in `demos/` cell by cell (blank-line-separated) with real angr,
-capturing — per cell — the input code, any streamed output (print/pp), and the
-final expression's repr (the `Out[n]`), exactly like IPython would. The result
-is written to src/assets/hero/notebooks.json, which the website renders as a
-static, syntax-highlighted notebook carousel.
+Runs each demo in `demos/<lang>/<mode>.py` cell by cell (blank-line-separated)
+with real angr, capturing — per cell — the input code, any streamed output
+(print/pp), and the final expression's repr (the `Out[n]`), exactly like
+IPython would. Each demo runs with `binaries/<lang>/` as its working directory,
+so `angr.Project("fauxware")` resolves to that language's build of fauxware.
+The result is written to src/assets/hero/notebooks.json.
 
-Needs angr + the test binaries (fauxware, go/age, rust/grex) from
-angr/binaries' tests/x86_64. Run from that directory (or set FAUXWARE_DIR=/path):
-
-    cd /path/to/binaries/tests/x86_64
-    python /path/to/angr.io/hero/build_notebooks.py
+    python hero/build_notebooks.py            # skips if up to date
+    python hero/build_notebooks.py --force
 
 Commit the regenerated notebooks.json.
 """
@@ -54,20 +53,19 @@ _disassembly.add_edge_to_buffer = _force_unicode_edges
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEMOS = os.path.join(HERE, "demos")
-OUT = os.path.join(HERE, "..", "src", "assets", "hero", "notebooks.json")
+BIN_DIR = os.path.join(HERE, "binaries")
+OUT = os.path.normpath(os.path.join(HERE, "..", "src", "assets", "hero", "notebooks.json"))
 
-# angr/binaries' tests/x86_64, so demos can `angr.Project("fauxware")` (and
-# "go/age", "rust/...") no matter what directory you run this from. Override
-# with FAUXWARE_DIR.
-BIN_DIR = os.environ.get(
-    "FAUXWARE_DIR",
-    os.path.normpath(os.path.join(HERE, "..", "..", "binaries", "tests", "x86_64")),
-)
+# The showcase matrix: every language × every analysis. Each entry maps to
+# demos/<lang>/<mode>.py, run against binaries/<lang>/fauxware. Order here is
+# display order (the hero carousel shows the C row).
+LANGS = ["c", "go", "rust"]
+MODES = [
+    ("decompile", "Decompilation"),
+    ("disasm", "Disassembly"),
+    ("symexec", "Symbolic Execution"),
+]
 
-# Demos to include, in carousel order. Each maps to demos/<id>.py.
-ORDER = ["decompile", "go_decompile", "rust_decompile", "disasm", "symexec"]
-
-_META = re.compile(r"#\s*(title|terminal):\s*(.*)", re.IGNORECASE)
 _SGR = re.compile(r"\x1b\[([0-9;]*)m")
 
 
@@ -107,24 +105,16 @@ def ansi_to_html(text):
 
 
 def parse(path):
-    """Return ({"title": ..., "terminal": ...}, body_lines).
+    """Return the demo's lines, trimmed of leading/trailing blank lines.
 
-    Only the `# title:` / `# terminal:` meta lines are removed; all other
-    comments are kept so they show up in the notebook as the annotations they are.
+    Comments are kept: they show up in the notebook as the annotations they are.
     """
-    meta = {}
-    body = []
-    for ln in open(path).read().splitlines():
-        m = _META.match(ln)
-        if m and m.group(1).lower() not in meta:
-            meta[m.group(1).lower()] = m.group(2).strip()
-            continue
-        body.append(ln)
+    body = open(path).read().splitlines()
     while body and body[0].strip() == "":
         body.pop(0)
     while body and body[-1].strip() == "":
         body.pop()
-    return meta, body
+    return body
 
 
 def cells_of(body):
@@ -164,11 +154,14 @@ def run_cell(ns, src):
     return buf.getvalue().rstrip("\n"), out_repr
 
 
-def run_demo(path):
-    meta, body = parse(path)
+def run_demo(lang, mode, title):
+    path = os.path.join(DEMOS, lang, f"{mode}.py")
+    body = parse(path)
     ns = {}
-    # Hidden setup, not part of the shown session: keep angr's log records out of the output.
-    exec("import logging; logging.disable(logging.CRITICAL)", ns)
+    # Keep angr's library logging out of the capture (it goes to stderr in a
+    # real session; the notebooks show only what the demo prints).
+    exec("import logging; logging.disable(logging.ERROR)", ns)
+    os.chdir(os.path.join(BIN_DIR, lang))  # so `angr.Project("fauxware")` resolves
 
     cells = []
     for n, src in enumerate(cells_of(body), start=1):
@@ -184,10 +177,10 @@ def run_demo(path):
         )
 
     return {
-        "id": os.path.splitext(os.path.basename(path))[0],
-        "title": meta.get("title", ""),
-        # shown in the window title bar as "<terminal> — ipython"
-        "terminal": meta.get("terminal", "fauxware"),
+        "id": f"{lang}-{mode}",
+        "lang": lang,
+        "mode": mode,
+        "title": title,
         "cells": cells,
     }
 
@@ -204,17 +197,20 @@ def _up_to_date(output, *sources):
 def main():
     # Skip regenerating if the output is newer than this script and every demo
     # it reads — like `make`. Pass --force to rebuild regardless.
-    sources = [os.path.abspath(__file__)] + [
-        os.path.join(DEMOS, f"{name}.py") for name in ORDER
-    ]
+    sources = [os.path.abspath(__file__)]
+    for lang in LANGS:
+        sources.append(os.path.join(BIN_DIR, lang, "fauxware"))
+        sources += [os.path.join(DEMOS, lang, f"{mode}.py") for mode, _ in MODES]
     if "--force" not in sys.argv and _up_to_date(OUT, *sources):
         print(f"{os.path.basename(OUT)} is up to date — skipping (--force to rebuild)")
         return
-    if os.path.isdir(BIN_DIR):
-        os.chdir(BIN_DIR)  # so demos resolve the fauxware binary
-    notebooks = [run_demo(os.path.join(DEMOS, f"{name}.py")) for name in ORDER]
+    notebooks = []
+    for lang in LANGS:
+        for mode, title in MODES:
+            print(f"  {lang}/{mode}", flush=True)
+            notebooks.append(run_demo(lang, mode, title))
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(os.path.abspath(OUT), "w") as f:
+    with open(OUT, "w") as f:
         json.dump(notebooks, f, indent=2)
         f.write("\n")
     print(f"wrote {OUT} ({len(notebooks)} notebooks)")
