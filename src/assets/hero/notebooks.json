@@ -20,7 +20,7 @@
   },
   {
     "id": "go_decompile",
-    "title": "Go Decompilation",
+    "title": "Go",
     "terminal": "age",
     "cells": [
       {
@@ -39,7 +39,7 @@
   },
   {
     "id": "rust_decompile",
-    "title": "Rust Decompilation",
+    "title": "Rust",
     "terminal": "grex",
     "cells": [
       {
