@@ -43,7 +43,7 @@ import notebooks from "@/assets/hero/notebooks.json";
       <div class="nb card ticked" data-nb-carousel>
         <div class="term-bar">
           <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          <span class="term-title">fauxware — ipython</span>
+          <span class="term-title" data-term-title>{notebooks[0].terminal} — ipython</span>
         </div>
 
         <div class="nb-stage-wrap">
@@ -91,6 +91,7 @@ import notebooks from "@/assets/hero/notebooks.json";
                 class="nb-tab"
                 data-tab
                 data-target={nb.id}
+                data-terminal={nb.terminal}
                 role="tab"
                 aria-controls={`nb-${nb.id}`}
                 aria-selected={i === 0 ? "true" : "false"}
@@ -335,6 +336,8 @@ import notebooks from "@/assets/hero/notebooks.json";
     const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-tab]"));
     const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-panel]"));
     const stage = root.querySelector<HTMLElement>(".nb-stage");
+    const termTitle = root.querySelector<HTMLElement>("[data-term-title]");
+    const tabBar = root.querySelector<HTMLElement>(".nb-tabs");
     if (tabs.length < 2) return;
 
     let index = 0;
@@ -349,6 +352,13 @@ import notebooks from "@/assets/hero/notebooks.json";
         t.tabIndex = k === index ? 0 : -1;
       });
       panels.forEach((p, k) => p.toggleAttribute("hidden", k !== index));
+      if (termTitle) termTitle.textContent = `${tabs[index].dataset.terminal} — ipython`;
+      // keep the active tab visible in the scrollable tab bar (scrollLeft only, so the page never jumps)
+      if (tabBar) {
+        const t = tabs[index].getBoundingClientRect();
+        const b = tabBar.getBoundingClientRect();
+        tabBar.scrollLeft += t.left - b.left - (b.width - t.width) / 2;
+      }
       if (stage) stage.scrollTop = 0; // reset scroll when switching demos
     };
     const stop = () => timer && clearInterval(timer);

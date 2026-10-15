@@ -50,8 +50,9 @@ inputs, so editing one demo won't re-record unrelated casts. `npm run gen:force`
   `npm run gen:force` (or `--force`); plain `gen` skips up-to-date artifacts. CI
   runs the generators with `--force` via uv on PRs and daily, so a breaking angr
   release is caught even with no code change.
-- They locate the `fauxware` test binary automatically (`FAUXWARE_DIR=…` to
-  override).
+- They locate the test binaries (`fauxware`, `go/age`, `rust/grex` from
+  angr/binaries' `tests/x86_64`) automatically (`FAUXWARE_DIR=…` to override).
+  The Go/Rust binaries live on angr/binaries; CI fetches all three.
 - CLI tab order follows the `DEMOS` list in `hero/record_cli.py`; the hero
   carousel order follows `ORDER` in `hero/build_notebooks.py`.
 - **Unicode CFG edges** only render when `stdout.encoding == "utf-8"`. That's why

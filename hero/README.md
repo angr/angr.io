@@ -17,6 +17,8 @@ hero/
 ├── demos/
 │   ├── symexec.py      # hero notebook: symbolic execution
 │   ├── decompile.py    # hero notebook: decompilation
+│   ├── go_decompile.py   # hero notebook: Go decompilation (binaries: go/age)
+│   ├── rust_decompile.py # hero notebook: Rust decompilation (binaries: rust/grex)
 │   ├── disasm.py       # hero notebook: disassembly
 │   └── fauxware.py     # full guided session (for the CLI asciinema playback)
 ├── build_notebooks.py  # demos/*.py -> notebooks.json  (static hero)
@@ -34,8 +36,9 @@ Each demo is ordinary angr code, written the way you'd type it into IPython:
   (like a REPL) and `print()` output appears inline.
 - **Blank lines separate cells.** In the hero notebook each cell becomes an
   `In [n]:` block with its output beneath.
-- A `# title:` line sets the carousel tab label. The rest of the leading comment
-  header is ignored.
+- A `# title:` line sets the carousel tab label, and an optional `# terminal:`
+  line sets the window title (`<terminal> — ipython`; default `fauxware`).
+  Every other comment is kept and shown.
 - Keep input lines short-ish — the hero column is narrow.
 
 To add a notebook to the hero, drop a `demos/<id>.py` and add `<id>` to `ORDER`
@@ -69,8 +72,9 @@ The workflow is: **edit a demo → regenerate → the page picks it up.**
    PYTHON=../venv/bin/python npm run gen
    ```
 
-   They find the `fauxware` test binary automatically in the angr-dev layout;
-   point `FAUXWARE_DIR=...` at the directory containing it otherwise.
+   They find the test binaries (`fauxware`, `go/age`, `rust/grex`) automatically
+   in the angr-dev layout (`binaries/tests/x86_64`); point `FAUXWARE_DIR=...` at
+   that directory otherwise.
 
 3. If `npm run dev` is running, the page hot-reloads as soon as
    `notebooks.json` changes. For a production build, `npm run build`.
