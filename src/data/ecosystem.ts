@@ -17,14 +17,14 @@ export const ecosystem: EcosystemProject[] = [
     href: "https://github.com/angr/angr-management",
   },
   {
+    name: "srcdump",
+    tagline: "Like objdump, but dumps decompiled source code.",
+    href: "https://github.com/angr/srcdump",
+  },
+  {
     name: "CLE",
     tagline: "Loads binaries and their libraries into memory.",
     href: "https://github.com/angr/cle",
-  },
-  {
-    name: "claripy",
-    tagline: "The solver abstraction over static & symbolic values.",
-    href: "https://github.com/angr/claripy",
   },
   {
     name: "PyVEX",
