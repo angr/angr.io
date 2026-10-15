@@ -1,12 +1,12 @@
 # Demos — angr in action
 
 Everything angr-related shown on angr.io comes from **real angr runs driven by
-the scripts in this folder**. They feed the hero's notebook carousel and the
-showcase's 3 × 3 × 3 picker (interface × language × analysis):
+the scripts in this folder**. They feed the hero's 3 × 3 × 3 picker
+(interface × language × analysis):
 
 | Tile | Rendered as | Built by | Output |
 | --- | --- | --- | --- |
-| IPython (and the hero) | a static IPython-notebook | `build_notebooks.py` | `src/assets/hero/notebooks.json` |
+| IPython | a static IPython-notebook | `build_notebooks.py` | `src/assets/hero/notebooks.json` |
 | CLI | an animated [asciinema](https://asciinema.org) playback | `record_cli.py` (+ `_angr_cli.py`, `_run_demo.py`) | `src/assets/cli/*.cast` + `manifest.json` |
 | GUI | an angr-management screenshot (light + dark) | `shoot_gui.py` | `src/assets/gui/*.png` |
 
@@ -25,7 +25,7 @@ hero/
 │   ├── c/      decompile.py  disasm.py  symexec.py    # one notebook each
 │   ├── go/     …
 │   └── rust/   …
-├── build_notebooks.py  # demos/<lang>/<mode>.py -> notebooks.json  (IPython tiles + hero)
+├── build_notebooks.py  # demos/<lang>/<mode>.py -> notebooks.json  (IPython tiles)
 ├── record_cli.py       # records the CLI tiles -> src/assets/cli/*.cast
 ├── _angr_cli.py        # wrapper: unicode CFG edges + quiet logging for the angr CLI
 ├── _run_demo.py        # wrapper: runs `python symexec.py` with quiet logging

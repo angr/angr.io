@@ -37,8 +37,9 @@ runs angr — it just imports the committed output. **Do not hand-edit them:**
 | `hero/binaries/{go,rust}/fauxware` | `fauxware.go` / `fauxware.rs` | `npm run gen:bin` (nix) |
 
 All three tile kinds cover the same matrix — languages `c`/`go`/`rust` ×
-modes `decompile`/`disasm`/`symexec` — and `Showcase.astro` looks artifacts up
-by `<lang>-<mode>` id, so keep the three generators' `LANGS`/`MODES` in sync.
+modes `decompile`/`disasm`/`symexec` — and the hero window (`Hero.astro`) looks
+artifacts up by `<lang>-<mode>` id, so keep the three generators' `LANGS`/`MODES`
+in sync.
 
 Workflow is always **edit a `hero/demos/<lang>/*.py` → regenerate → commit the output.**
 If you change a demo and forget to regenerate, the site won't reflect it. If you
@@ -62,8 +63,9 @@ inputs, so editing one demo won't re-record unrelated casts. `npm run gen:force`
 - The binaries live in `hero/binaries/<lang>/fauxware` (C is the canonical
   angr/binaries one; Go and Rust are ports built by `hero/binaries/build.sh`).
   Rebuilding a binary moves addresses — regenerate everything afterwards.
-- The hero carousel shows the `c` row of `notebooks.json`; the showcase's
-  order follows `LANGS`/`MODES` in the generators.
+- The hero's picker order (interface × language × analysis) is the `IFACES`/
+  `LANGS`/`MODES` lists at the top of `Hero.astro`; the default tile is `DEFAULT`
+  there. The picker is the only demo UI — there is no separate showcase section.
 - **Unicode CFG edges** only render when `stdout.encoding == "utf-8"`. That's why
   `record_cli.py` sets `PYTHONIOENCODING=utf-8` and the decompile/disassemble
   tabs run through `_angr_cli.py`, and why `build_notebooks.py` monkeypatches the

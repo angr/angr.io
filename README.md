@@ -40,15 +40,14 @@ src/
   styles/        global.css — design tokens, themes, components, animations
 ```
 
-## Demos: the hero and the showcase
+## Demos: the hero window
 
-The hero and the showcase section ("Any interface. Any language. Any
-analysis.") are generated from **real angr runs** driven by
-[`hero/`](hero/). The showcase is a 3 × 3 × 3 picker — CLI / IPython / GUI ×
+The hero's demo window is generated from **real angr runs** driven by
+[`hero/`](hero/). It is a 3 × 3 × 3 picker — CLI / IPython / GUI ×
 C / Go / Rust × decompile / disassemble / symbolic execution — over the same
 `fauxware` program built from each language:
 
-- **IPython** tiles (and the hero carousel) are static notebooks, built by
+- **IPython** tiles are static notebooks, built by
   `build_notebooks.py` → `src/assets/hero/notebooks.json`.
 - **CLI** tiles are animated
   [asciinema-player](https://github.com/asciinema/asciinema-player) playback,

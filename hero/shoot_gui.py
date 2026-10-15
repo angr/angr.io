@@ -4,7 +4,7 @@
 # dependencies = ["angr[unicorn]", "angr-management"]
 # ///
 """
-Screenshot angr-management for the showcase's GUI tiles.
+Screenshot angr-management for the hero window's GUI tiles.
 
 Drives the real angr-management (headless, Qt "offscreen" platform) for each
 binary in `binaries/` and each analysis — disassembly graph, decompilation,

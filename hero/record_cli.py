@@ -75,7 +75,7 @@ def rust_funcs(names):
 
 
 def build_demos():
-    """One recording per (language, tab) — the showcase's CLI column."""
+    """One recording per (language, tab) — the hero window's CLI column."""
     demos = []
     for lang in LANGS:
         cwd = os.path.join(BIN_DIR, lang)

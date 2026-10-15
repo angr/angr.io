@@ -3,7 +3,7 @@ import { mkdirSync } from "node:fs";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:4321";
 const OUT = process.env.OUT ?? "screenshots";
-// Screenshots the showcase picker (src/components/Showcase.astro) in both
+// Screenshots the hero's demo window (src/components/Hero.astro) in both
 // themes, desktop + mobile, for a few interface/language/analysis combos.
 // Run against `npm run preview`:  node scripts/shoot-showcase.mjs
 // COMBOS="gui|c|decompile,cli|go|symexec" OUT=shots node scripts/shoot-showcase.mjs
@@ -22,7 +22,7 @@ try {
       await page.goto(BASE, { waitUntil: "networkidle" });
       await page.evaluate(() => document.fonts.ready);
       await page.evaluate(() => document.querySelectorAll(".reveal").forEach((el) => el.classList.add("in-view")));
-      const sc = page.locator("#showcase");
+      const sc = page.locator(".hero");
       await sc.scrollIntoViewIfNeeded();
       for (const combo of COMBOS) {
         const [iface, lang, mode] = combo.split("|");
@@ -31,7 +31,7 @@ try {
         }
         await page.waitForTimeout(iface === "cli" ? 2500 : 800);
         const tag = `${theme}-${vp.name}-${iface}-${lang}-${mode}`;
-        await sc.screenshot({ path: `${OUT}/showcase-${tag}.png` });
+        await sc.screenshot({ path: `${OUT}/hero-${tag}.png` });
         console.log("shot", tag);
       }
       if (vp.name === "desktop") await page.screenshot({ path: `${OUT}/full-${theme}.png`, fullPage: true });

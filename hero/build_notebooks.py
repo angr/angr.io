@@ -4,8 +4,8 @@
 # dependencies = ["angr[unicorn]"]
 # ///
 """
-Build the static IPython-notebook data shown on angr.io (the hero carousel and
-the showcase's IPython tiles).
+Build the static IPython-notebook data shown on angr.io (the hero window's
+IPython tiles).
 
 Runs each demo in `demos/<lang>/<mode>.py` cell by cell (blank-line-separated)
 with real angr, capturing — per cell — the input code, any streamed output
@@ -56,9 +56,9 @@ DEMOS = os.path.join(HERE, "demos")
 BIN_DIR = os.path.join(HERE, "binaries")
 OUT = os.path.normpath(os.path.join(HERE, "..", "src", "assets", "hero", "notebooks.json"))
 
-# The showcase matrix: every language × every analysis. Each entry maps to
+# The hero matrix: every language × every analysis. Each entry maps to
 # demos/<lang>/<mode>.py, run against binaries/<lang>/fauxware. Order here is
-# display order (the hero carousel shows the C row).
+# display order.
 LANGS = ["c", "go", "rust"]
 MODES = [
     ("decompile", "Decompilation"),
