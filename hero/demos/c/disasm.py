@@ -1,4 +1,3 @@
-# title: Disassembly
 # Disassemble a function with its CFG edges
 import angr
 proj = angr.Project("fauxware")

@@ -27,3 +27,6 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 __pycache__/
+
+# angr 10 drops an LMDB knowledge-base cache next to each analyzed binary
+*_angr_rtdb*/

@@ -31,10 +31,17 @@ runs angr — it just imports the committed output. **Do not hand-edit them:**
 
 | Artifact | Generated from | Command |
 | --- | --- | --- |
-| `src/assets/hero/notebooks.json` | `hero/demos/*.py` | `npm run gen:hero` |
-| `src/assets/cli/*.cast` + `manifest.json` | `hero/demos/*.py` via `record_cli.py` | `npm run gen:cli` |
+| `src/assets/hero/notebooks.json` | `hero/demos/<lang>/*.py` | `npm run gen:hero` |
+| `src/assets/cli/*.cast` + `manifest.json` | `hero/demos/<lang>/symexec.py` + the angr CLI, via `record_cli.py` | `npm run gen:cli` |
+| `src/assets/gui/*.png` | angr-management driven by `hero/shoot_gui.py` | `npm run gen:gui` |
+| `hero/binaries/{go,rust}/fauxware` | `fauxware.go` / `fauxware.rs` | `npm run gen:bin` (nix) |
 
-Workflow is always **edit a `hero/demos/*.py` → regenerate → commit the output.**
+All three tile kinds cover the same matrix — languages `c`/`go`/`rust` ×
+modes `decompile`/`disasm`/`symexec` — and the hero window (`Hero.astro`) looks
+artifacts up by `<lang>-<mode>` id, so keep the three generators' `LANGS`/`MODES`
+in sync.
+
+Workflow is always **edit a `hero/demos/<lang>/*.py` → regenerate → commit the output.**
 If you change a demo and forget to regenerate, the site won't reflect it. If you
 edit the JSON/cast by hand, the next regen silently overwrites you. `npm run gen`
 is timestamp-driven: each generator skips itself when its output is newer than its
@@ -45,20 +52,27 @@ inputs, so editing one demo won't re-record unrelated casts. `npm run gen:force`
   script's PEP 723 inline metadata, no venv needed. Override with `PYTHON=…` to
   use a specific interpreter, e.g. `PYTHON=../venv/bin/python` for the angr-dev
   venv.
+- `gen:gui` runs the real angr-management headless (PySide6). It needs X11/xcb
+  runtime libraries the wheel doesn't bundle; `nix-shell` (the repo's `shell.nix`)
+  provides them (plus Python/uv/go/rustc). It is not run in CI.
 - Regenerating *is* the validation: both generators re-run every demo and fail
   on error (no separate validator). Use the **force** form to actually re-run —
   `npm run gen:force` (or `--force`); plain `gen` skips up-to-date artifacts. CI
   runs the generators with `--force` via uv on PRs and daily, so a breaking angr
   release is caught even with no code change.
-- They locate the test binaries (`fauxware`, `go/age`, `rust/grex` from
-  angr/binaries' `tests/x86_64`) automatically (`FAUXWARE_DIR=…` to override).
-  The Go/Rust binaries live on angr/binaries; CI fetches all three.
-- CLI tab order follows the `DEMOS` list in `hero/record_cli.py`; the hero
-  carousel order follows `ORDER` in `hero/build_notebooks.py`.
+- The binaries live in `hero/binaries/<lang>/fauxware` (C is the canonical
+  angr/binaries one; Go and Rust are ports built by `hero/binaries/build.sh`).
+  Rebuilding a binary moves addresses — regenerate everything afterwards.
+- The hero's picker order (interface × language × analysis) is the `IFACES`/
+  `LANGS`/`MODES` lists at the top of `Hero.astro`; the default tile is `DEFAULT`
+  there. The picker is the only demo UI — there is no separate showcase section.
 - **Unicode CFG edges** only render when `stdout.encoding == "utf-8"`. That's why
   `record_cli.py` sets `PYTHONIOENCODING=utf-8` and the decompile/disassemble
   tabs run through `_angr_cli.py`, and why `build_notebooks.py` monkeypatches the
   edge writer. Don't remove these or the graph edges fall back to ASCII.
+- The wrappers (`_angr_cli.py`, `_run_demo.py`) and the notebook builder
+  silence angr's library logging so tiles show the demo's own output. Keep
+  that; the Rust analyses in particular log tracebacks for std functions.
 
 ## Verify visually before claiming done
 

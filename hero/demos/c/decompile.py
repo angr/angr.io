@@ -1,4 +1,3 @@
-# title: Decompilation
 # Decompile main() to readable C
 import angr
 proj = angr.Project("fauxware")

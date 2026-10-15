@@ -30,20 +30,14 @@ jobs:
         uses: actions/checkout@v4
       - name: Install uv
         uses: astral-sh/setup-uv@v5
-      - name: Fetch demo test binaries
-        run: |
-          for f in fauxware go/age rust/grex; do
-            mkdir -p "$(dirname "$RUNNER_TEMP/bin/$f")"
-            curl -fsSL -o "$RUNNER_TEMP/bin/$f" \
-              "https://raw.githubusercontent.com/angr/binaries/master/tests/x86_64/$f"
-            chmod +x "$RUNNER_TEMP/bin/$f"
-          done
+      # The demo binaries (fauxware built from C, Go and Rust) are committed
+      # under hero/binaries, so this needs nothing but angr. The GUI
+      # screenshots (hero/shoot_gui.py) need a Qt runtime and are regenerated
+      # locally instead — see hero/README.md.
       - name: Regenerate demos against latest angr
         run: |
           uv run hero/build_notebooks.py --force
           uv run hero/record_cli.py --force
-        env:
-          FAUXWARE_DIR: ${{ runner.temp }}/bin
 
   # Build + typecheck on every push and PR, so broken builds are caught before
   # they reach the default branch. Only pushes upload the deployable artifact.

@@ -11,7 +11,7 @@ const viewports = [
 ];
 const themes = ["dark", "light"];
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || undefined });
 try {
   for (const theme of themes) {
     for (const vp of viewports) {

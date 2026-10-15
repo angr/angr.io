@@ -1,8 +1,9 @@
 [
   {
-    "id": "decompile",
+    "id": "c-decompile",
+    "lang": "c",
+    "mode": "decompile",
     "title": "Decompilation",
-    "terminal": "fauxware",
     "cells": [
       {
         "n": 1,
@@ -13,53 +14,16 @@
       {
         "n": 2,
         "code": "dec = proj.analyses.Decompiler(\"main\")\nprint(dec.codegen.text)",
-        "streamHtml": "int main(unsigned int a0, unsigned long a1)\n{\n    char v0;  // [bp-0x2c], Other Possible Types: unsigned int\n    char v1;  // [bp-0x28]\n    char choice;  // [bp-0x20]\n    char v3;  // [bp-0x18]\n    char flag;  // [bp-0x10]\n\n    flag = 0;\n    choice = 0;\n    puts(&quot;Username: &quot;);\n    read(0, &amp;v3, 8);\n    read(0, &amp;v0, 1);\n    puts(&quot;Password: &quot;);\n    read(0, &amp;v1, 8);\n    read(0, &amp;v0, 1);\n    v0 = authenticate(&amp;v3, &amp;v1, &amp;v1);\n    if (!v0)\n        rejected(); /* do not return */\n    return accepted();\n}",
+        "streamHtml": "int main(unsigned int a0, unsigned long long a1)\n{\n    unsigned long long v0;  // [bp-0x48]\n    unsigned int v1;  // [bp-0x3c]\n    char v2;  // [bp-0x2c], Other Possible Types: unsigned int\n    char v3;  // [bp-0x28]\n    char v4;  // [bp-0x20]\n    char v5;  // [bp-0x18]\n    char v6;  // [bp-0x10]\n\n    v1 = a0;\n    v0 = a1;\n    v6 = 0;\n    v4 = 0;\n    puts(&quot;Username: &quot;);\n    read(0, &amp;v5, 8);\n    read(0, &amp;v2, 1);\n    puts(&quot;Password: &quot;);\n    read(0, &amp;v3, 8);\n    read(0, &amp;v2, 1);\n    v2 = authenticate(&amp;v5, &amp;v3, &amp;v3);\n    if (!v2)\n        rejected(); /* do not return */\n    return accepted();\n}",
         "out": null
       }
     ]
   },
   {
-    "id": "go_decompile",
-    "title": "Go",
-    "terminal": "age",
-    "cells": [
-      {
-        "n": 1,
-        "code": "# Decompile a method of age (filippo.io/age) to Go pseudocode\nimport angr\nproj = angr.Project(\"go/age\", auto_load_libs=False)\ncfg = proj.analyses.CFGFast(normalize=True)",
-        "streamHtml": "",
-        "out": null
-      },
-      {
-        "n": 2,
-        "code": "dec = proj.analyses.Decompiler(\n    \"filippo.io/hpke.(*hybridPrivateKey).decap\", flavor=\"go\"\n)\nprint(dec.codegen.text)",
-        "streamHtml": "func (recv *filippo.io/hpke.hybridPrivateKey) decap(a1 []uint8) ([]uint8, error) {\n    v7 := recv.kem.pqCiphertextSize\n    if len(a1) != recv.kem.curvePointSize + v7 {\n        return nil, errors.New(&quot;invalid encapsulated key size&quot;)\n    }\n    v1 := cap(a1) - v7\n    v14, err := recv.pq.Decapsulate()\n    if err != nil {\n        return nil, err\n    }\n    v0 := len(a1) - v7\n    v4 := -v1 &gt;&gt; 63 &amp; v7 + a1.ptr\n    v13, err2 := recv.t.Curve().NewPublicKey(v4, v0, v1)\n    if err2 != nil {\n        return nil, err2\n    }\n    v9, err3 := recv.t.ECDH(v13, recv.t.data)\n    if err3 == nil {\n        return filippo.io/hpke.(*hybridKEM).sharedSecret(recv.kem, v14, v9, []uint8{ptr: v4, len: v0, cap: v1}, crypto/ecdh.(*PublicKey).Bytes(recv.t.PublicKey())), nil\n    }\n    return nil, err3\n}",
-        "out": null
-      }
-    ]
-  },
-  {
-    "id": "rust_decompile",
-    "title": "Rust",
-    "terminal": "grex",
-    "cells": [
-      {
-        "n": 1,
-        "code": "# Rust pseudocode for grex's main(). Based on \"Oxidizer: Toward\n# Concise and High-fidelity Rust Decompilation\" (Yibo Liu et al.,\n# IEEE S&P 2026).\nimport angr\nproj = angr.Project(\"rust/grex\", auto_load_libs=False)\ncfg = proj.analyses.CFGFast(normalize=True)\nmain = next(f for f in proj.kb.functions.values()\n            if f.demangled_name == \"grex::main\")\ncc = proj.analyses.CompleteCallingConventions(\n    prioritize_func_addrs=[main.addr], skip_other_funcs=True)",
-        "streamHtml": "",
-        "out": null
-      },
-      {
-        "n": 2,
-        "code": "# rustc version, std signatures and std type layouts\nproj.analyses.RustcVersionIdentification()\nproj.analyses.RustSymbolRecovery()\nproj.analyses.TypeDBLoader()\ndec = proj.analyses.Decompiler(main, flavor=\"rust\")\nprint(dec.codegen.text)",
-        "streamHtml": "fn grex::main() -&gt; u0 {\n    let v0: Option&lt;struct16&gt;;  // [bp-0xd0]\n    let v1: u64;  // [bp-0xc8]\n    let v2: Result&lt;struct24, struct16&gt;;  // [bp-0xb0]\n    let v3: struct120;  // [bp-0x80]\n    let v5: Option&lt;struct16&gt;;  // rax\n    let v6: u64;  // rdx\n\n    v3 = clap_builder::derive::Parser::parse();\n    v2 = grex::cli::obtain_input(&amp;v3);\n    v5 = grex::cli::handle_input(&amp;v3, &amp;v2) as u64;\n    if let Some(_) = v5 {\n        v0 = v5;\n        v1 = v6;\n        eprintln!(&quot;{}&quot;, &amp;v0);\n        std::process::exit(1); /* do not return */\n    } else {\n        return;\n    }\n}",
-        "out": null
-      }
-    ]
-  },
-  {
-    "id": "disasm",
+    "id": "c-disasm",
+    "lang": "c",
+    "mode": "disasm",
     "title": "Disassembly",
-    "terminal": "fauxware",
     "cells": [
       {
         "n": 1,
@@ -70,9 +34,10 @@
     ]
   },
   {
-    "id": "symexec",
+    "id": "c-symexec",
+    "lang": "c",
+    "mode": "symexec",
     "title": "Symbolic Execution",
-    "terminal": "fauxware",
     "cells": [
       {
         "n": 1,
@@ -88,9 +53,135 @@
       },
       {
         "n": 3,
-        "code": "simgr.found[0].posix.dumps(0)",
+        "code": "print(simgr.found[0].posix.dumps(0))",
+        "streamHtml": "b&#x27;\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00SOSNEAKY\\x00&#x27;",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "go-decompile",
+    "lang": "go",
+    "mode": "decompile",
+    "title": "Decompilation",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Decompile a Go binary's main.main \u2014 back to Go\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)",
         "streamHtml": "",
-        "out": "b'\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00SOSNEAKY\\x00'"
+        "out": null
+      },
+      {
+        "n": 2,
+        "code": "proj.analyses.CompleteCallingConventions()\ndec = proj.analyses.Decompiler(\"main.main\", flavor=\"go\")\nprint(dec.codegen.text)",
+        "streamHtml": "func main.main() {\n    v0 := 0\n    v1 := 0\n    v2 := 0\n    v3 := 0\n    v4 := 0\n    v10 := &quot;Username: \\nPassword: \\nbad addressfile existsbroken pipebad messageassistQueuenetpollInitreflectOffsglobalAllocmSpanManualstart traceclobberfreegccheckmarkscheddetailunspecified&quot;\n    syscall.RawSyscall(1, 1, &quot;Username: \\n&quot;, 11)\n    v9 := &amp;v0\n    syscall.RawSyscall(0, 0, &amp;v0, 8)\n    v8 := &amp;v4\n    syscall.RawSyscall(0, 0, &amp;v4, 1)\n    v7 := &quot;Password: \\nbad addressfile existsbroken pipebad messageassistQueuenetpollInitreflectOffsglobalAllocmSpanManualstart traceclobberfreegccheckmarkscheddetailunspecified&quot;\n    syscall.RawSyscall(1, 1, &quot;Password: \\n&quot;, 11)\n    v6 := &amp;v2\n    syscall.RawSyscall(0, 0, &amp;v2, 8)\n    v5 := &amp;v4\n    syscall.RawSyscall(0, 0, &amp;v4, 1)\n    ok, v13 := main.authenticate(&amp;v0, 9, 9, &amp;v2, 8, 9)\n    if !ok {\n        main.rejected()\n        return\n    }\n    main.accepted()\n    return\n}",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "go-disasm",
+    "lang": "go",
+    "mode": "disasm",
+    "title": "Disassembly",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Disassemble a Go function with its CFG edges\nimport angr\nproj = angr.Project(\"fauxware\")\nproj.analyses.CFGFast(normalize=True)\nproj.kb.functions[\"main.authenticate\"].pp()",
+        "streamHtml": "                  <span class=\"a11\">main.authenticate:</span>\n<span class=\"a3\">\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">47c5c0</span>  cmp     rsp, <span class=\"a3\">qword ptr [r14+0x10]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2574</span><span class=\"a8\">47c5c4</span>  jbe     <span class=\"a6\">0x47c67a</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5ca</span>  push    rbp\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5cb</span>  mov     rbp, rsp\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5ce</span>  sub     rsp, <span class=\"a6\">0x38</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5d2</span>  mov     <span class=\"a3\">qword ptr [rsp+0x48]</span>, rax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5d7</span>  mov     <span class=\"a3\">qword ptr [rsp+0x60]</span>, rdi\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5dc</span>  nop     <span class=\"a3\">dword ptr [rax]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c5e0</span>  cmp     rsi, <span class=\"a6\">0x8</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u256d\u2500\u2500\u2574</span><span class=\"a8\">47c5e4</span>  jne     <span class=\"a6\">0x47c601</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502   </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502   </span><span class=\"a8\">47c5e6</span>  movabs  rdx, <span class=\"a6\">0x594b41454e534f53</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502   </span><span class=\"a8\">47c5f0</span>  cmp     <span class=\"a3\">qword ptr [rdi]</span>, rdx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2574</span><span class=\"a8\">47c5f3</span>  jne     <span class=\"a6\">0x47c601</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c5f5</span>  mov     eax, <span class=\"a6\">0x1</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c5fa</span>  add     rsp, <span class=\"a6\">0x38</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c5fe</span>  pop     rbp\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c5ff</span>  nop     \n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c600</span>  ret     \n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2570\u25b8</span><span class=\"a3\">\u2570\u25b8</span><span class=\"a8\">47c601</span>  mov     <span class=\"a3\">qword ptr [rsp+0x20]</span>, <span class=\"a6\">0x0</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c60a</span>  nop     \n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span><span class=\"a8\">47c60b</span>  test    rbx, rbx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2500\u2500\u2500\u2500\u2574</span><span class=\"a8\">47c60e</span>  jbe     <span class=\"a6\">0x47c674</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c610</span>  mov     <span class=\"a3\">qword ptr [rsp+0x68]</span>, rsi\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c615</span>  mov     <span class=\"a3\">qword ptr [rsp+0x60]</span>, rdi\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c61a</span>  mov     <span class=\"a3\">qword ptr [rsp+0x30]</span>, rax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c61f</span>  mov     rbx, rax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c622</span>  xor     ecx, ecx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c624</span>  mov     rdi, rcx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c627</span>  mov     eax, <span class=\"a6\">0x2</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c62c</span>  call    <span class=\"a6\">syscall.RawSyscall</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c631</span>  nop     \n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c632</span>  lea     rcx, <span class=\"a3\">[rsp+0x20]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c637</span>  mov     <span class=\"a3\">qword ptr [rsp+0x28]</span>, rcx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c63c</span>  mov     rbx, rax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c63f</span>  mov     edi, <span class=\"a6\">0x8</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c644</span>  xor     eax, eax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c646</span>  call    <span class=\"a6\">syscall.RawSyscall</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c64b</span>  mov     rdx, <span class=\"a3\">qword ptr [rsp+0x68]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c650</span>  cmp     rdx, <span class=\"a6\">0x8</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u256d\u2574</span><span class=\"a8\">47c654</span>  je      <span class=\"a6\">0x47c65a</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c656</span>  xor     eax, eax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2574</span><span class=\"a3\">\u2502 </span><span class=\"a8\">47c658</span>  jmp     <span class=\"a6\">0x47c66e</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u25b8</span><span class=\"a8\">47c65a</span>  mov     rax, <span class=\"a3\">qword ptr [rsp+0x60]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a8\">47c65f</span>  lea     rbx, <span class=\"a3\">[rsp+0x20]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a8\">47c664</span>  mov     ecx, <span class=\"a6\">0x8</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a8\">47c669</span>  call    <span class=\"a6\">runtime.memequal</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2500\u2500\u25b8</span><span class=\"a8\">47c66e</span>  add     rsp, <span class=\"a6\">0x38</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c672</span>  pop     rbp\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">47c673</span>  ret     \n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">47c674</span>  call    <span class=\"a6\">runtime.panicBounds</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502       </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">47c67a</span>  mov     <span class=\"a3\">qword ptr [rsp+0x8]</span>, rax\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c67f</span>  mov     <span class=\"a3\">qword ptr [rsp+0x10]</span>, rbx\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c684</span>  mov     <span class=\"a3\">qword ptr [rsp+0x18]</span>, rcx\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c689</span>  mov     <span class=\"a3\">qword ptr [rsp+0x20]</span>, rdi\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c68e</span>  mov     <span class=\"a3\">qword ptr [rsp+0x28]</span>, rsi\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c693</span>  mov     <span class=\"a3\">qword ptr [rsp+0x30]</span>, r8\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c698</span>  call    <span class=\"a6\">runtime.morestack_noctxt.abi0</span>\n<span class=\"a3\">\u2502         </span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c69d</span>  mov     rax, <span class=\"a3\">qword ptr [rsp+0x8]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6a2</span>  mov     rbx, <span class=\"a3\">qword ptr [rsp+0x10]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6a7</span>  mov     rcx, <span class=\"a3\">qword ptr [rsp+0x18]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6ac</span>  mov     rdi, <span class=\"a3\">qword ptr [rsp+0x20]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6b1</span>  mov     rsi, <span class=\"a3\">qword ptr [rsp+0x28]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6b6</span>  mov     r8, <span class=\"a3\">qword ptr [rsp+0x30]</span>\n<span class=\"a3\">\u2502         </span><span class=\"a8\">47c6bb</span>  nop     <span class=\"a3\">dword ptr [rax+rax]</span>\n<span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2574</span><span class=\"a8\">47c6c0</span>  jmp     <span class=\"a6\">main.authenticate</span>",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "go-symexec",
+    "lang": "go",
+    "mode": "symexec",
+    "title": "Symbolic Execution",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Find the input that gets accepted\nimport angr\nproj = angr.Project(\"fauxware\")\nmain = proj.loader.find_symbol(\"main.main\").rebased_addr\naccepted = proj.loader.find_symbol(\"main.accepted\").rebased_addr\nmorestack = proj.loader.find_symbol(\"runtime.morestack_noctxt.abi0\").rebased_addr",
+        "streamHtml": "",
+        "out": null
+      },
+      {
+        "n": 2,
+        "code": "# skip the Go runtime's bootstrap: start right at main.main\nstate = proj.factory.blank_state(addr=main)\nsimgr = proj.factory.simgr(state)\nsimgr.explore(find=accepted, avoid=morestack)",
+        "streamHtml": "",
+        "out": "<SimulationManager with 1 active, 1 found, 2 avoid>"
+      },
+      {
+        "n": 3,
+        "code": "print(simgr.found[0].posix.dumps(0))",
+        "streamHtml": "b&#x27;\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00SOSNEAKY\\x00&#x27;",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "rust-decompile",
+    "lang": "rust",
+    "mode": "decompile",
+    "title": "Decompilation",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Decompile a Rust binary's main \u2014 back to Rust\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)",
+        "streamHtml": "",
+        "out": null
+      },
+      {
+        "n": 2,
+        "code": "proj.analyses.CompleteCallingConventions()\nproj.analyses.RustSymbolRecovery()\nproj.analyses.TypeDBLoader()\nfuncs = {f.demangled_name: f for f in cfg.functions.values()}",
+        "streamHtml": "",
+        "out": null
+      },
+      {
+        "n": 3,
+        "code": "dec = proj.analyses.Decompiler(funcs[\"fauxware::main\"], flavor=\"rust\")\nprint(dec.codegen.text)",
+        "streamHtml": "fn fauxware::main() -&gt; u0 {\n    let v0: std::io::stdio::Stdin;  // [bp-0x60]\n    let v1: u8;  // [bp-0x51]\n    let v2: u8;  // [bp-0x49]\n    let v3: u8;  // [bp-0x41]\n    let v4: u64;  // [bp-0x38]\n    let v5: u64;  // [bp-0x28]\n    let v6: u64;  // [bp-0x18]\n    let v7: u64;  // [bp-0x8]\n    let v10: struct16;  // rax:rdx\n    let v11: core::result::Result&lt;usize, std::io::error::Error&gt;;  // rax:rdx\n    let v12: core::result::Result&lt;usize, std::io::error::Error&gt;;  // rax:rdx\n    let v13: core::result::Result&lt;usize, std::io::error::Error&gt;;  // rax:rdx\n    let v14: core::result::Result&lt;usize, std::io::error::Error&gt;;  // rax:rdx\n    let v15: struct16;  // rax:rdx\n\n    v0 = std::io::stdio::stdin();\n    memset(&amp;v1, 0, 8);\n    memset(&amp;v2, 0, 8);\n    v3 = 0;\n    v10 = &lt;core::fmt::Arguments&gt;::from_str(&quot;Username: \\n&quot;);\n    std::io::stdio::_print(v10 as u64);\n    v13 = &lt;std::io::stdio::Stdin as std::io::Read&gt;::read(&amp;v0, &amp;v1, 8);\n    v4 = *((&amp;v13 as &amp;char + 8) as &amp;i64);\n    core::ptr::drop_glue::&lt;core::result::Result&lt;usize, core::io::error::Error&gt;&gt;(&amp;v13 as i64);\n    v14 = &lt;std::io::stdio::Stdin as std::io::Read&gt;::read(&amp;v0, &amp;v3, 1);\n    v5 = *((&amp;v14 as &amp;char + 8) as &amp;i64);\n    core::ptr::drop_glue::&lt;core::result::Result&lt;usize, core::io::error::Error&gt;&gt;(&amp;v14 as i64);\n    v15 = &lt;core::fmt::Arguments&gt;::from_str(&quot;Password: \\n&quot;);\n    std::io::stdio::_print(v15 as u64);\n    v12 = &lt;std::io::stdio::Stdin as std::io::Read&gt;::read(&amp;v0, &amp;v2, 8);\n    v6 = *((&amp;v12 as &amp;char + 8) as &amp;i64);\n    core::ptr::drop_glue::&lt;core::result::Result&lt;usize, core::io::error::Error&gt;&gt;(&amp;v12 as i64);\n    v11 = &lt;std::io::stdio::Stdin as std::io::Read&gt;::read(&amp;v0, &amp;v3, 1);\n    v7 = *((&amp;v11 as &amp;char + 8) as &amp;i64);\n    core::ptr::drop_glue::&lt;core::result::Result&lt;usize, core::io::error::Error&gt;&gt;(&amp;v11 as i64);\n    if fauxware::authenticate(&amp;v1, &amp;v2) as char {\n        fauxware::accepted();\n        return;\n    }\n    fauxware::rejected(); /* do not return */\n}",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "rust-disasm",
+    "lang": "rust",
+    "mode": "disasm",
+    "title": "Disassembly",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Disassemble a Rust function \u2014 angr demangles the symbols\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)\nfuncs = {f.demangled_name: f for f in cfg.functions.values()}\nfuncs[\"fauxware::authenticate\"].pp()",
+        "streamHtml": "                    <span class=\"a11\">_RNvCsfJzwR3Dz023_8fauxware12authenticate:</span>\n            <span class=\"a8\">40a840</span>  sub     rsp, <span class=\"a6\">0x68</span>\n            <span class=\"a8\">40a844</span>  mov     <span class=\"a3\">qword ptr [rsp]</span>, rdi\n            <span class=\"a8\">40a848</span>  mov     <span class=\"a3\">qword ptr [rsp+0x8]</span>, rsi\n            <span class=\"a8\">40a84d</span>  lea     rdi, <span class=\"a3\">[rsp+0x8]</span>\n            <span class=\"a8\">40a852</span>  lea     rsi, <span class=\"a3\">[0x4613b8]</span>\n            <span class=\"a8\">40a859</span>  call    <span class=\"a6\">&lt;&amp;[u8; 8] as core::cmp::PartialEq&gt;::eq</span>\n            \n            <span class=\"a8\">40a85e</span>  test    al, <span class=\"a6\">0x1</span>\n      <span class=\"a3\">\u256d\u2500\u2500\u2500\u2500\u2574</span><span class=\"a8\">40a860</span>  jne     <span class=\"a6\">0x40a8b9</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a862</span>  lea     rdi, <span class=\"a3\">[rsp+0x18]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a867</span>  xor     esi, esi\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a869</span>  mov     edx, <span class=\"a6\">0x8</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a86e</span>  call    <span class=\"a6\">memset</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a873</span>  mov     rsi, <span class=\"a3\">qword ptr [rsp]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a877</span>  lea     rdi, <span class=\"a3\">[rsp+0x20]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a87c</span>  mov     edx, <span class=\"a6\">0x8</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a881</span>  call    <span class=\"a3\">qword ptr [0x463ca0]</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a887</span>  lea     rdi, <span class=\"a3\">[rsp+0x20]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a88c</span>  call    <span class=\"a6\">&lt;alloc::borrow::Cow&lt;str&gt; as core::ops::deref::Deref&gt;::deref</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a891</span>  mov     rdi, rax\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a894</span>  mov     rsi, rdx\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a897</span>  xor     edx, edx\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a899</span>  call    <span class=\"a6\">&lt;str&gt;::trim_end_matches::&lt;char&gt;</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a89e</span>  mov     rsi, rax\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a8a1</span>  lea     rdi, <span class=\"a3\">[rsp+0x38]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a8a6</span>  call    <span class=\"a6\">&lt;std::fs::File&gt;::open::&lt;&amp;str&gt;</span>\n      <span class=\"a3\">\u2502     </span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a8ab</span>  mov     eax, <span class=\"a3\">dword ptr [rsp+0x38]</span>\n      <span class=\"a3\">\u2502     </span><span class=\"a8\">40a8af</span>  test    rax, <span class=\"a6\">0x1</span>\n      <span class=\"a3\">\u2502   </span><span class=\"a3\">\u256d\u2574</span><span class=\"a8\">40a8b5</span>  jne     <span class=\"a6\">0x40a8c0</span>\n      <span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span>\n      <span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2574</span><span class=\"a3\">\u2502 </span><span class=\"a8\">40a8b7</span>  jmp     <span class=\"a6\">0x40a8ce</span>\n      <span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span>\n      <span class=\"a3\">\u2570\u25b8</span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">40a8b9</span>  mov     <span class=\"a3\">byte ptr [rsp+0x17]</span>, <span class=\"a6\">0x1</span>\n<span class=\"a3\">\u256d\u2500\u2500\u2500\u2500\u2500\u2500\u2574</span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a8\">40a8be</span>  jmp     <span class=\"a6\">0x40a93e</span>\n<span class=\"a3\">\u2502       </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span>\n<span class=\"a3\">\u2502   </span><span class=\"a3\">\u256d\u2500\u2500\u25b8</span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u25b8</span><span class=\"a8\">40a8c0</span>  mov     eax, <span class=\"a3\">dword ptr [rsp+0x38]</span>\n<span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502   </span><span class=\"a8\">40a8c4</span>  test    rax, <span class=\"a6\">0x1</span>\n<span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2574</span><span class=\"a3\">\u2502   </span><span class=\"a8\">40a8ca</span>  jne     <span class=\"a6\">0x40a90b</span>\n<span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u256d\u2574</span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a8\">40a8cc</span>  jmp     <span class=\"a6\">0x40a915</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2500\u2500\u25b8</span><span class=\"a8\">40a8ce</span>  mov     eax, <span class=\"a3\">dword ptr [rsp+0x3c]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8d2</span>  mov     <span class=\"a3\">dword ptr [rsp+0x4c]</span>, eax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8d6</span>  lea     rdi, <span class=\"a3\">[rsp+0x4c]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8db</span>  lea     rsi, <span class=\"a3\">[rsp+0x18]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8e0</span>  mov     edx, <span class=\"a6\">0x8</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8e5</span>  call    <span class=\"a3\">qword ptr [0x463980]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8eb</span>  mov     <span class=\"a3\">qword ptr [rsp+0x50]</span>, rax\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8f0</span>  mov     <span class=\"a3\">qword ptr [rsp+0x58]</span>, rdx\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8f5</span>  lea     rdi, <span class=\"a3\">[rsp+0x50]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8fa</span>  call    <span class=\"a6\">core::ptr::drop_glue::&lt;core::result::Result&lt;usize, core::io::error::Error&gt;&gt;</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a8ff</span>  lea     rdi, <span class=\"a3\">[rsp+0x4c]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a904</span>  call    <span class=\"a6\">core::ptr::drop_glue::&lt;std::fs::File&gt;</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2574</span><span class=\"a3\">\u2502     </span><span class=\"a8\">40a909</span>  jmp     <span class=\"a6\">0x40a8c0</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2502     </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502   </span><span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">40a90b</span>  lea     rdi, <span class=\"a3\">[rsp+0x38]</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502         </span><span class=\"a8\">40a910</span>  call    <span class=\"a6\">core::ptr::drop_glue::&lt;core::result::Result&lt;std::fs::File, core::io::error::Error&gt;&gt;</span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2502         </span>\n<span class=\"a3\">\u2502 </span><span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">40a915</span>  lea     rax, <span class=\"a3\">[rsp+0x18]</span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a91a</span>  mov     <span class=\"a3\">qword ptr [rsp+0x60]</span>, rax\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a91f</span>  lea     rdi, <span class=\"a3\">[rsp+0x8]</span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a924</span>  lea     rsi, <span class=\"a3\">[rsp+0x60]</span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a929</span>  call    <span class=\"a6\">&lt;&amp;[u8; 8] as core::cmp::PartialEq&gt;::eq</span>\n<span class=\"a3\">\u2502           </span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a92e</span>  and     al, <span class=\"a6\">0x1</span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a930</span>  mov     <span class=\"a3\">byte ptr [rsp+0x17]</span>, al\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a934</span>  lea     rdi, <span class=\"a3\">[rsp+0x20]</span>\n<span class=\"a3\">\u2502           </span><span class=\"a8\">40a939</span>  call    <span class=\"a6\">core::ptr::drop_glue::&lt;alloc::borrow::Cow&lt;str&gt;&gt;</span>\n<span class=\"a3\">\u2502           </span>\n<span class=\"a3\">\u2570\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25b8</span><span class=\"a8\">40a93e</span>  mov     al, <span class=\"a3\">byte ptr [rsp+0x17]</span>\n            <span class=\"a8\">40a942</span>  and     al, <span class=\"a6\">0x1</span>\n            <span class=\"a8\">40a944</span>  add     rsp, <span class=\"a6\">0x68</span>\n            <span class=\"a8\">40a948</span>  ret     ",
+        "out": null
+      }
+    ]
+  },
+  {
+    "id": "rust-symexec",
+    "lang": "rust",
+    "mode": "symexec",
+    "title": "Symbolic Execution",
+    "cells": [
+      {
+        "n": 1,
+        "code": "# Find the input that gets accepted\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)\nfuncs = {f.demangled_name: f for f in cfg.functions.values()}",
+        "streamHtml": "",
+        "out": null
+      },
+      {
+        "n": 2,
+        "code": "# skip the Rust runtime's startup: start right at fauxware::main\nstate = proj.factory.blank_state(addr=funcs[\"fauxware::main\"].addr)\nsimgr = proj.factory.simgr(state)\nsimgr.explore(find=funcs[\"fauxware::accepted\"].addr)",
+        "streamHtml": "",
+        "out": "<SimulationManager with 1 active, 1 found>"
+      },
+      {
+        "n": 3,
+        "code": "print(simgr.found[0].posix.dumps(0).rstrip(b\"\\x00\"))",
+        "streamHtml": "b&#x27;\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00SOSNEAKY&#x27;",
+        "out": null
       }
     ]
   }
