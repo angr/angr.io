@@ -49,9 +49,9 @@ C / Go / Rust × decompile / disassemble / symbolic execution — over the same
 
 - **IPython** tiles are static notebooks, built by
   `build_notebooks.py` → `src/assets/hero/notebooks.json`.
-- **CLI** tiles are animated
-  [asciinema-player](https://github.com/asciinema/asciinema-player) playback,
-  built by `record_cli.py` → `src/assets/cli/*.cast` + `manifest.json`.
+- **CLI** tiles are static transcripts of the real `angr` command line (the
+  page types the command, then shows the captured output), built by
+  `capture_cli.py` → `src/assets/cli/transcripts.json`.
 - **GUI** tiles are angr-management screenshots (light + dark), taken headless
   by `shoot_gui.py` → `src/assets/gui/*.png`.
 

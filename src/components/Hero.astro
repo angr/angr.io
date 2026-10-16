@@ -4,12 +4,12 @@ import { Image } from "astro:assets";
 import type { ImageMetadata } from "astro";
 import Icon from "@/components/Icon.astro";
 import notebooks from "@/assets/hero/notebooks.json";
-import casts from "@/assets/cli/manifest.json";
+import transcripts from "@/assets/cli/transcripts.json";
 
 // The hero window is a 3-axis picker — interface × language × analysis — over
 // 27 real angr sessions on the same program (fauxware, built from C, Go and
 // Rust). Every tile is generated from real angr by the scripts in hero/:
-//   cli      asciinema casts        hero/record_cli.py      -> src/assets/cli
+//   cli      static transcripts     hero/capture_cli.py     -> src/assets/cli
 //   ipython  static notebooks       hero/build_notebooks.py -> src/assets/hero
 //   gui      angr-management shots  hero/shoot_gui.py       -> src/assets/gui
 
@@ -30,43 +30,11 @@ const MODES = [
 ] as const;
 const DEFAULT = { iface: "cli", lang: "c", mode: "decompile" };
 
-// --- CLI casts -------------------------------------------------------------
-const castUrls = import.meta.glob("../assets/cli/*.cast", {
-  query: "?url",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
-const castRaws = import.meta.glob("../assets/cli/*.cast", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-}) as Record<string, string>;
-const byId = <T,>(mods: Record<string, T>) =>
-  Object.fromEntries(
-    Object.entries(mods).map(([p, v]) => [p.split("/").pop()!.replace(".cast", ""), v])
-  ) as Record<string, T>;
-const castUrl = byId(castUrls);
-const castRaw = byId(castRaws);
-const castById = Object.fromEntries(casts.map((c: any) => [c.id, c]));
-
-// Plain-text transcript of a cast (for the no-JS fallback of the default tile).
-const transcript = (id: string) =>
-  (castRaw[id] || "")
-    .split("\n")
-    .slice(1)
-    .map((line) => {
-      try {
-        return JSON.parse(line);
-      } catch {
-        return null;
-      }
-    })
-    .filter((ev) => ev && ev[1] === "o")
-    .map((ev) => ev[2])
-    .join("")
-    .replace(/\x1b\[[0-9;?]*[a-zA-Z]/g, "")
-    .replace(/\r/g, "")
-    .trimEnd();
+// --- CLI transcripts -------------------------------------------------------
+// Each transcript is a list of steps: the command the prompt shows and its
+// output, either the terminal's own ANSI-colored text as HTML or plain code
+// that the site highlights (the decompile tab; see capture_cli.py).
+const cliById = Object.fromEntries(transcripts.map((t: any) => [t.id, t]));
 
 // --- angr-management screenshots -------------------------------------------
 const shots = import.meta.glob<{ default: ImageMetadata }>("../assets/gui/*.png", {
@@ -91,7 +59,7 @@ const tiles = IFACES.flatMap((i) =>
 );
 const isDefault = (t: { iface: string; lang: string; mode: string }) =>
   t.iface === DEFAULT.iface && t.lang === DEFAULT.lang && t.mode === DEFAULT.mode;
-const defaultCast = castById[`${DEFAULT.lang}-${DEFAULT.mode}`];
+const defaultCli = cliById[`${DEFAULT.lang}-${DEFAULT.mode}`];
 const modeName = (id: string) =>
   ({ decompile: "decompilation", disasm: "disassembly", symexec: "symbolic execution" })[id];
 ---
@@ -148,21 +116,28 @@ const modeName = (id: string) =>
               tiles.map((t) => {
                 const hidden = !isDefault(t);
                 if (t.iface === "cli") {
-                  const c = castById[t.key];
+                  const c = cliById[t.key];
                   return (
-                    <div
-                      class="tile cast-tile"
-                      data-tile={t.id}
-                      data-cast={castUrl[t.key]}
-                      data-display={c?.display}
-                      hidden={hidden}
-                    >
-                      <div class="cast-mount" role="img" aria-label={`Recorded angr session: ${c?.display}`} />
-                      {!hidden && (
-                        <noscript>
-                          <pre class="cast-fallback">{transcript(t.key)}</pre>
-                        </noscript>
-                      )}
+                    <div class="tile cli-tile" data-tile={t.id} data-display={c.display} hidden={hidden}>
+                      {c.steps.map((s: any) => (
+                        <div class="step" data-step>
+                          <div class="ps1">
+                            <span class="dollar" aria-hidden="true">$</span>
+                            <span class="typed" data-typed={s.cmd}>{s.cmd}</span>
+                          </div>
+                          {s.code != null ? (
+                            <div class="term-out code" data-out>
+                              <Code
+                                code={s.code}
+                                lang={s.lang}
+                                themes={{ light: "github-light", dark: "one-dark-pro" }}
+                              />
+                            </div>
+                          ) : (
+                            <pre class="term-out" data-out set:html={s.html} />
+                          )}
+                        </div>
+                      ))}
                     </div>
                   );
                 }
@@ -233,7 +208,7 @@ const modeName = (id: string) =>
         </div>
 
         <div class="status">
-          <code class="cmd" data-cmd>{defaultCast?.display}</code>
+          <code class="cmd" data-cmd>{defaultCli?.display}</code>
         </div>
 
         <div class="picker">
@@ -381,7 +356,7 @@ const modeName = (id: string) =>
     color: var(--fg-faint);
   }
 
-  /* Stage: a fixed window every tile fits into, so switching between a cast,
+  /* Stage: a fixed window every tile fits into, so switching between a transcript,
      a notebook and a screenshot never reflows the page. 16:10 like the
      angr-management shots, clamped so notebooks keep room on narrow screens. */
   .stage-wrap {
@@ -389,6 +364,10 @@ const modeName = (id: string) =>
   }
   .stage {
     position: relative;
+    /* Explicit width: otherwise the min-height is transferred through the
+       aspect ratio into a min-width and the stage overflows the card on
+       narrow screens. */
+    width: 100%;
     aspect-ratio: 16 / 10;
     min-height: 21rem;
     max-height: 27rem;
@@ -411,31 +390,62 @@ const modeName = (id: string) =>
     display: none;
   }
 
-  /* CLI: asciinema player, font fitted to the width (110-col casts). */
-  .cast-tile {
-    padding: 0.2rem 0.3rem;
-    overflow: hidden;
-  }
-  .cast-mount {
-    width: 100%;
-    transition: opacity 0.15s ease;
-  }
-  :global(.js) .cast-mount {
-    aspect-ratio: 1 / 0.5225;
-    overflow: hidden;
-  }
-  .cast-mount.is-loading {
-    opacity: 0;
-    transition: none;
-  }
-  .cast-fallback {
-    margin: 0;
-    padding: 0.6rem 0.8rem;
+  /* CLI: a static transcript. The prompt line types itself when the tile
+     is shown; the output is the real command's stdout. */
+  .cli-tile {
+    padding: 0.9rem 1.1rem 2.5rem;
     font-family: var(--font-mono);
-    font-size: 0.72rem;
+    font-size: clamp(0.68rem, 1.4vw, 0.78rem);
     line-height: 1.5;
-    color: var(--fg-muted);
+  }
+  .step + .step {
+    margin-top: 0.9rem;
+  }
+  .ps1 {
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    color: var(--fg);
+    margin-bottom: 0.45rem;
+  }
+  .dollar {
+    color: var(--primary);
+    font-weight: 700;
+    margin-right: 1ch;
+    user-select: none;
+  }
+  .typed.typing::after {
+    content: "";
+    display: inline-block;
+    width: 0.55em;
+    height: 1em;
+    margin-left: 0.1em;
+    vertical-align: -0.15em;
+    background: var(--fg);
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% {
+      opacity: 0;
+    }
+  }
+  .term-out {
+    margin: 0;
+    font: inherit;
+    white-space: pre;
+    overflow-x: auto;
+    color: var(--fg);
+  }
+  .term-out[hidden],
+  .step[hidden] {
+    display: none;
+  }
+  .term-out :global(pre.astro-code) {
+    margin: 0;
+    padding: 0;
+    background: transparent !important;
+    font-size: inherit;
+    line-height: inherit;
+    overflow-x: auto;
   }
 
   /* IPython: the static notebook. */
@@ -609,9 +619,6 @@ const modeName = (id: string) =>
 </style>
 
 <script>
-  import * as AsciinemaPlayer from "asciinema-player";
-  import "asciinema-player/dist/bundle/asciinema-player.css";
-
   const IFACE_TITLE: Record<string, string> = {
     cli: "angr",
     ipython: "ipython",
@@ -628,6 +635,10 @@ const modeName = (id: string) =>
     disasm: "Disassembly view — control-flow graph",
     symexec: "Symbolic Execution view — explore to `accepted`",
   };
+  const TYPE_MS = 900; // how long typing one command takes, whatever its length
+  const PAUSE_MS = 350; // beat between a typed command and its output
+
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
   const mount = () => {
     const root = document.querySelector<HTMLElement>("[data-showcase]");
@@ -643,51 +654,44 @@ const modeName = (id: string) =>
     const sel: Record<string, string> = { iface: iface0, lang: lang0, mode: mode0 };
 
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let player: { dispose?: () => void } | null = null;
-    let mountedIn: HTMLElement | null = null;
-    let inView = false;
+    let run = 0; // bumps on every switch so a stale typing loop stops
 
-    const loadCast = (tile: HTMLElement) => {
-      const el = tile.querySelector<HTMLElement>(".cast-mount");
-      const src = tile.dataset.cast;
-      if (!el || !src) return;
-      if (player?.dispose) player.dispose();
-      player = null;
-      el.innerHTML = "";
-      // Hide the brief oversized first render until asciinema has fitted the
-      // font to the width.
-      el.classList.add("is-loading");
-      let tries = 0;
-      const reveal = () => el.classList.remove("is-loading");
-      const checkFitted = () => {
-        const term = el.querySelector<HTMLElement>(".ap-term");
-        const fitted = term && parseFloat(getComputedStyle(term).fontSize) < 18;
-        if (fitted || tries++ > 40) reveal();
-        else requestAnimationFrame(checkFitted);
-      };
-      requestAnimationFrame(checkFitted);
-      player = AsciinemaPlayer.create(src, el, {
-        autoPlay: !reduce,
-        loop: !reduce,
-        preload: true,
-        controls: false,
-        fit: "width",
-        terminalFontFamily: "'JetBrains Mono Variable', ui-monospace, 'SF Mono', monospace",
-        terminalLineHeight: 1.3,
-        theme: "angr",
-        poster: reduce ? "npt:9999:0" : undefined,
-      });
-      mountedIn = tile;
-    };
-
-    const unloadCast = () => {
-      if (player?.dispose) player.dispose();
-      player = null;
-      if (mountedIn) {
-        const el = mountedIn.querySelector<HTMLElement>(".cast-mount");
-        if (el) el.innerHTML = "";
+    // Type each step's command, then reveal its output — a nod to "this is a
+    // terminal" that costs about a second and never hides the finished result
+    // for long. Re-selecting a tile replays it; switching away cancels it.
+    const typeOut = async (tile: HTMLElement) => {
+      const token = ++run;
+      const steps = Array.from(tile.querySelectorAll<HTMLElement>("[data-step]"));
+      const live = () => token === run;
+      steps.forEach((st) => st.toggleAttribute("hidden", true));
+      for (const st of steps) {
+        const typed = st.querySelector<HTMLElement>("[data-typed]")!;
+        const out = st.querySelector<HTMLElement>("[data-out]")!;
+        const text = typed.dataset.typed || "";
+        typed.textContent = "";
+        typed.classList.add("typing");
+        out.toggleAttribute("hidden", true);
+        st.toggleAttribute("hidden", false);
+        const delay = TYPE_MS / Math.max(text.length, 1);
+        for (let i = 1; i <= text.length; i++) {
+          await sleep(delay);
+          if (!live()) return;
+          typed.textContent = text.slice(0, i);
+        }
+        await sleep(PAUSE_MS);
+        if (!live()) return;
+        typed.classList.remove("typing");
+        out.toggleAttribute("hidden", false);
       }
-      mountedIn = null;
+    };
+    const showAll = (tile: HTMLElement) => {
+      tile.querySelectorAll<HTMLElement>("[data-step]").forEach((st) => {
+        st.toggleAttribute("hidden", false);
+        const typed = st.querySelector<HTMLElement>("[data-typed]")!;
+        typed.textContent = typed.dataset.typed || "";
+        typed.classList.remove("typing");
+        st.querySelector<HTMLElement>("[data-out]")!.toggleAttribute("hidden", false);
+      });
     };
 
     const render = () => {
@@ -716,12 +720,10 @@ const modeName = (id: string) =>
               ? NB_CMD[sel.mode]
               : GUI_CMD[sel.mode];
       }
-      // Only one asciinema player lives at a time; mount it for a visible
-      // CLI tile (once in view) and tear it down otherwise.
-      if (current && sel.iface === "cli" && inView) {
-        if (mountedIn !== current) loadCast(current);
-      } else {
-        unloadCast();
+      run++; // cancel any typing still going on in a tile we just left
+      if (current && sel.iface === "cli") {
+        if (reduce) showAll(current);
+        else typeOut(current);
       }
     };
 
@@ -744,42 +746,7 @@ const modeName = (id: string) =>
       });
     });
 
-    // Start the cast once the window is actually on screen, so it plays from
-    // the top when the visitor sees it (immediately for the hero, but it also
-    // covers view-transition swaps that land further down the page).
-    const start = () => {
-      inView = true;
-      render();
-    };
-    if ("IntersectionObserver" in window) {
-      const io = new IntersectionObserver(
-        (entries, obs) => {
-          if (entries.some((e) => e.isIntersecting)) {
-            obs.disconnect();
-            start();
-          }
-        },
-        { rootMargin: "0px 0px -20% 0px" }
-      );
-      io.observe(root);
-    } else {
-      start();
-    }
     render();
-
-    // asciinema bakes the palette into each drawn cell, so re-render the
-    // current cast when the site theme flips. documentElement survives
-    // view-transition swaps, so drop any observer from a previous page.
-    const w = window as unknown as { __showcaseThemeObs?: MutationObserver };
-    w.__showcaseThemeObs?.disconnect();
-    const themeObserver = new MutationObserver(() => {
-      if (mountedIn) loadCast(mountedIn);
-    });
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    w.__showcaseThemeObs = themeObserver;
   };
 
   mount();

@@ -37,7 +37,7 @@ jobs:
       - name: Regenerate demos against latest angr
         run: |
           uv run hero/build_notebooks.py --force
-          uv run hero/record_cli.py --force
+          uv run hero/capture_cli.py --force
 
   # Build + typecheck on every push and PR, so broken builds are caught before
   # they reach the default branch. Only pushes upload the deployable artifact.

@@ -14,7 +14,7 @@
     "gen": "npm run gen:hero && npm run gen:cli && npm run gen:gui",
     "gen:force": "npm run gen:hero -- --force && npm run gen:cli -- --force && npm run gen:gui -- --force",
     "gen:hero": "${PYTHON:-uv run} hero/build_notebooks.py",
-    "gen:cli": "${PYTHON:-uv run} hero/record_cli.py",
+    "gen:cli": "${PYTHON:-uv run} hero/capture_cli.py",
     "gen:gui": "${PYTHON:-uv run} hero/shoot_gui.py",
     "gen:bin": "hero/binaries/build.sh"
   },
@@ -24,7 +24,6 @@
     "@fontsource-variable/jetbrains-mono": "^5.1.2",
     "@iconify-json/lucide": "^1.2.113",
     "@iconify-json/simple-icons": "^1.2.86",
-    "asciinema-player": "^3.16.0",
     "astro": "^7.0.0",
     "astro-icon": "^1.1.5"
   },
