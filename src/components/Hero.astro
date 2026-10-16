@@ -654,7 +654,6 @@ const modeName = (id: string) =>
     const [iface0, lang0, mode0] = (root.dataset.default || "cli|c|decompile").split("|");
     const sel: Record<string, string> = { iface: iface0, lang: lang0, mode: mode0 };
 
-    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let run = 0; // bumps on every switch so a stale typing loop stops
 
     // The hero card scroll-reveals (Base.astro adds .in-view, then it fades in
@@ -680,6 +679,10 @@ const modeName = (id: string) =>
     // Type each step's command, then reveal its output — a nod to "this is a
     // terminal" that costs about a second and never hides the finished result
     // for long. Re-selecting a tile replays it; switching away cancels it.
+    // Deliberately not gated on prefers-reduced-motion: text appearing is not
+    // the vestibular kind of motion that preference targets (the card's fade
+    // still respects it), and Linux browsers report it set when GNOME's
+    // animation toggle is off.
     const typeOut = async (tile: HTMLElement) => {
       const token = ++run;
       const steps = Array.from(tile.querySelectorAll<HTMLElement>("[data-step]"));
@@ -712,16 +715,6 @@ const modeName = (id: string) =>
         out.toggleAttribute("hidden", false);
       }
     };
-    const showAll = (tile: HTMLElement) => {
-      tile.querySelectorAll<HTMLElement>("[data-step]").forEach((st) => {
-        st.toggleAttribute("hidden", false);
-        const typed = st.querySelector<HTMLElement>("[data-typed]")!;
-        typed.textContent = typed.dataset.typed || "";
-        typed.classList.remove("typing");
-        st.querySelector<HTMLElement>("[data-out]")!.toggleAttribute("hidden", false);
-      });
-    };
-
     const render = () => {
       const id = `${sel.iface}-${sel.lang}-${sel.mode}`;
       let current: HTMLElement | null = null;
@@ -749,10 +742,7 @@ const modeName = (id: string) =>
               : GUI_CMD[sel.mode];
       }
       run++; // cancel any typing still going on in a tile we just left
-      if (current && sel.iface === "cli") {
-        if (reduce) showAll(current);
-        else typeOut(current);
-      }
+      if (current && sel.iface === "cli") typeOut(current);
     };
 
     groups.forEach((g) => {
