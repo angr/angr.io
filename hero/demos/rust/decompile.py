@@ -1,4 +1,6 @@
-# Decompile a Rust binary's main — back to Rust
+# Decompile a Rust binary's main — back to Rust. Based on "Oxidizer: Toward
+# Concise and High-fidelity Rust Decompilation" (Yibo Liu et al.,
+# IEEE S&P 2026).
 import angr
 proj = angr.Project("fauxware")
 cfg = proj.analyses.CFGFast(normalize=True)

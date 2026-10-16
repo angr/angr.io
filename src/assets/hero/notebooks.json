@@ -127,7 +127,7 @@
     "cells": [
       {
         "n": 1,
-        "code": "# Decompile a Rust binary's main \u2014 back to Rust\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)",
+        "code": "# Decompile a Rust binary's main \u2014 back to Rust. Based on \"Oxidizer: Toward\n# Concise and High-fidelity Rust Decompilation\" (Yibo Liu et al.,\n# IEEE S&P 2026).\nimport angr\nproj = angr.Project(\"fauxware\")\ncfg = proj.analyses.CFGFast(normalize=True)",
         "streamHtml": "",
         "out": null
       },
