@@ -7,7 +7,7 @@ the scripts in this folder**. They feed the hero's 3 × 3 × 3 picker
 | Tile | Rendered as | Built by | Output |
 | --- | --- | --- | --- |
 | IPython | a static IPython-notebook | `build_notebooks.py` | `src/assets/hero/notebooks.json` |
-| CLI | an animated [asciinema](https://asciinema.org) playback | `record_cli.py` (+ `_angr_cli.py`, `_run_demo.py`) | `src/assets/cli/*.cast` + `manifest.json` |
+| CLI | a static transcript of the real `angr` CLI (the page types the command) | `capture_cli.py` (+ `_angr_cli.py`, `_run_demo.py`) | `src/assets/cli/transcripts.json` |
 | GUI | an angr-management screenshot (light + dark) | `shoot_gui.py` | `src/assets/gui/*.png` |
 
 All three run against the same program — the classic `fauxware` backdoor —
@@ -26,7 +26,8 @@ hero/
 │   ├── go/     …
 │   └── rust/   …
 ├── build_notebooks.py  # demos/<lang>/<mode>.py -> notebooks.json  (IPython tiles)
-├── record_cli.py       # records the CLI tiles -> src/assets/cli/*.cast
+├── capture_cli.py      # captures the CLI tiles -> src/assets/cli/transcripts.json
+├── _ansi.py            # ANSI 16-color -> themed HTML spans (shared by both)
 ├── _angr_cli.py        # wrapper: unicode CFG edges + quiet logging for the angr CLI
 ├── _run_demo.py        # wrapper: runs `python symexec.py` with quiet logging
 ├── shoot_gui.py        # drives angr-management headless -> src/assets/gui/*.png
@@ -63,15 +64,14 @@ The workflow is: **edit a demo → regenerate → the page picks it up.**
    npm run gen             # rebuild only what changed (skips up-to-date output)
    npm run gen:force       # rebuild everything, ignoring timestamps
    npm run gen:hero        # just the notebooks (skips if up to date)
-   npm run gen:cli         # just the CLI casts (skips if up to date)
+   npm run gen:cli         # just the CLI transcripts (skips if up to date)
    npm run gen:gui         # just the angr-management screenshots
    ```
 
    The generators are timestamp-aware: each skips itself when its output is
    newer than the generator, the binaries and the demos it reads. So editing one
-   notebook demo won't re-record the CLI casts — whose nondeterministic timing
-   would otherwise churn in git for no reason. Pass `--force` (or
-   `npm run gen:force`) to rebuild regardless.
+   notebook demo won't re-run the whole-binary CLI analyses for nothing. Pass
+   `--force` (or `npm run gen:force`) to rebuild regardless.
 
    These run via **uv** by default — no setup, no venv: angr is provisioned from
    each script's PEP 723 inline metadata. To generate against a specific angr
@@ -84,27 +84,38 @@ The workflow is: **edit a demo → regenerate → the page picks it up.**
 3. If `npm run dev` is running, the page hot-reloads as soon as the artifacts
    change. For a production build, `npm run build`.
 
-Commit the regenerated artifacts (`notebooks.json`, `src/assets/cli/*.cast`,
+Commit the regenerated artifacts (`notebooks.json`, `transcripts.json`,
 `src/assets/gui/*.png`).
 
-### CLI asciinema casts
+### CLI transcripts
 
 ```bash
-npm run gen:cli         # records src/assets/cli/*.cast + manifest.json
+npm run gen:cli         # captures src/assets/cli/transcripts.json
 ```
 
-This drives the angr command-line interface under a PTY: per language a
-`decompile` tab (`--go` / `--rust` pick the matching decompilation flavor), a
-`disassemble` tab, and a `symexec` tab that `cat`s and runs the language's
-`demos/<lang>/symexec.py`. The CLI runs through the `_angr_cli.py` wrapper,
-which forces unicode control-flow edges (angr only draws them when
-`stdout.encoding` is exactly `utf-8`) and keeps library logging out of the
-recording; `_run_demo.py` does the same for the script tab. Long whole-binary
-analyses (the Go and Rust builds carry a lot of runtime code) are fast-forwarded
-so no tab spends more than a few seconds on progress bars.
+This runs the angr command-line interface for real: per language a `decompile`
+tab (`--go` / `--rust` pick the matching decompilation flavor), a `disassemble`
+tab, and a `symexec` tab that `cat`s and runs the language's
+`demos/<lang>/symexec.py`. Each command gets a pseudo-terminal on stdout *and*
+stderr (angr only colors its output when both are terminals); stdout is kept
+verbatim, stderr — rich's progress bars and summaries — is drained and dropped.
+The page shows the finished output and types the command itself.
+
+The CLI runs through the `_angr_cli.py` wrapper, which forces unicode
+control-flow edges (angr only draws them when `stdout.encoding` is exactly
+`utf-8`) and keeps library logging out of the transcript; `_run_demo.py` does
+the same for the script tab.
+
+The disassembly keeps angr's own 16-color ANSI output (rendered through the
+same themed `.a0`–`.a15` spans as the notebooks). The decompile tab is the one
+exception: the CLI highlights decompiled code with rich's fixed truecolor
+theme, which can't follow the site's light/dark palette, so it is captured with
+`--no-colors` and highlighted at build time by the site's highlighter — the
+same treatment IPython input gets. The prompt still shows the command you'd
+actually type.
 
 Rust symbols are mangled, so the Rust tabs address functions by address — the
-recorder resolves `fauxware::main` etc. with angr at record time.
+capture resolves `fauxware::main` etc. with angr first.
 
 ### GUI screenshots (angr-management)
 
@@ -144,8 +155,8 @@ The demos are real angr code, so an angr API change can silently break them —
 the committed artifacts would still serve, but they'd be stale/wrong. There's no
 separate validator: **regenerating *is* the check.** The generators re-run every
 demo against the installed angr and fail on error — `build_notebooks.py` lets
-the demo exceptions propagate, and `record_cli.py` exits non-zero if a recorded
-command fails (rather than baking an error into the cast). So:
+the demo exceptions propagate, and `capture_cli.py` exits non-zero if a captured
+command fails (rather than baking an error into the transcript). So:
 
 ```bash
 npm run gen:force        # force a rebuild even if nothing changed
@@ -177,6 +188,5 @@ demos or angr-management change.
 
 ## Notes
 
-- `record_cli.py` is a tiny dependency-free `asciinema rec` (pty + asciicast v2).
-- The asciinema player and its theme power the CLI tiles; the IPython tiles and
-  the hero use the static notebooks (no player).
+- All three tile kinds are static: the page ships no player or runtime
+  dependency for them, just the typed-prompt animation in `Hero.astro`.

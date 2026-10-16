@@ -32,7 +32,7 @@ runs angr — it just imports the committed output. **Do not hand-edit them:**
 | Artifact | Generated from | Command |
 | --- | --- | --- |
 | `src/assets/hero/notebooks.json` | `hero/demos/<lang>/*.py` | `npm run gen:hero` |
-| `src/assets/cli/*.cast` + `manifest.json` | `hero/demos/<lang>/symexec.py` + the angr CLI, via `record_cli.py` | `npm run gen:cli` |
+| `src/assets/cli/transcripts.json` | `hero/demos/<lang>/symexec.py` + the angr CLI, via `capture_cli.py` | `npm run gen:cli` |
 | `src/assets/gui/*.png` | angr-management driven by `hero/shoot_gui.py` | `npm run gen:gui` |
 | `hero/binaries/{go,rust}/fauxware` | `fauxware.go` / `fauxware.rs` | `npm run gen:bin` (nix) |
 
@@ -45,7 +45,7 @@ Workflow is always **edit a `hero/demos/<lang>/*.py` → regenerate → commit t
 If you change a demo and forget to regenerate, the site won't reflect it. If you
 edit the JSON/cast by hand, the next regen silently overwrites you. `npm run gen`
 is timestamp-driven: each generator skips itself when its output is newer than its
-inputs, so editing one demo won't re-record unrelated casts. `npm run gen:force`
+inputs, so editing one demo won't re-capture unrelated transcripts. `npm run gen:force`
 (or `--force`) rebuilds regardless.
 
 - The generators run via **uv** by default — `uv run` provisions angr from each
@@ -67,7 +67,7 @@ inputs, so editing one demo won't re-record unrelated casts. `npm run gen:force`
   `LANGS`/`MODES` lists at the top of `Hero.astro`; the default tile is `DEFAULT`
   there. The picker is the only demo UI — there is no separate showcase section.
 - **Unicode CFG edges** only render when `stdout.encoding == "utf-8"`. That's why
-  `record_cli.py` sets `PYTHONIOENCODING=utf-8` and the decompile/disassemble
+  `capture_cli.py` sets `PYTHONIOENCODING=utf-8` and the decompile/disassemble
   tabs run through `_angr_cli.py`, and why `build_notebooks.py` monkeypatches the
   edge writer. Don't remove these or the graph edges fall back to ASCII.
 - The wrappers (`_angr_cli.py`, `_run_demo.py`) and the notebook builder

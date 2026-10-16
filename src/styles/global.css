@@ -293,49 +293,8 @@
 }
 
 /* ---------------------------------------------------------------------------
-   asciinema-player — themed to blend into the hero's terminal card.
-   Its base-16 palette is wired to the same theme-aware `--a*` colors the
-   notebook console uses (defined below), so both consoles read identically and
-   flip together between light/dark. Asciinema resolves these vars to inline
-   rgb() at render time, so only the base-16 codes (0–15) are themeable this way
-   (the casts' main output — decompiled C, disassembly — uses them); the few
-   256-color SGR codes fall back to asciinema's fixed palette. Because the
-   colors are baked in at render time, the player must be re-rendered on a theme
-   change to repaint already-drawn cells — see CliShowcase.astro. */
-.ap-player.asciinema-player-theme-angr {
-  --term-color-foreground: var(--fg);
-  --term-color-background: transparent;
-  --term-color-0: var(--a0);
-  --term-color-1: var(--a1);
-  --term-color-2: var(--a2);
-  --term-color-3: var(--a3);
-  --term-color-4: var(--a4);
-  --term-color-5: var(--a5);
-  --term-color-6: var(--a6);
-  --term-color-7: var(--a7);
-  --term-color-8: var(--a8);
-  --term-color-9: var(--a9);
-  --term-color-10: var(--a10);
-  --term-color-11: var(--a11);
-  --term-color-12: var(--a12);
-  --term-color-13: var(--a13);
-  --term-color-14: var(--a14);
-  --term-color-15: var(--a15);
-}
-/* Strip the player's own chrome so it sits flush inside our window frame.
-   asciinema's terminal (`.ap-term`) pads itself with a thick solid-black
-   border — recolor it to transparent so our card surface shows through. */
-.ap-player,
-.ap-term {
-  background: transparent !important;
-}
-.ap-term {
-  border-color: transparent !important;
-}
-
-/* ---------------------------------------------------------------------------
    Terminal ANSI 16-color palette (GitHub-style), theme-aware. Used to render
-   the real color that angr's pp() emits in the hero notebook's output.
+   the real color angr emits in the hero's notebook and CLI output.
 --------------------------------------------------------------------------- */
 :root {
   --a0: #24292f; --a1: #cf222e; --a2: #1a7f37; --a3: #9a6700;
