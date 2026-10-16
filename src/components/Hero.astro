@@ -635,8 +635,9 @@ const modeName = (id: string) =>
     disasm: "Disassembly view — control-flow graph",
     symexec: "Symbolic Execution view — explore to `accepted`",
   };
-  const TYPE_MS = 900; // how long typing one command takes, whatever its length
-  const PAUSE_MS = 350; // beat between a typed command and its output
+  const TYPE_MS = 1100; // how long typing one command takes, whatever its length
+  const PAUSE_MS = 450; // beat between a typed command and its output
+  const REVEAL_MS = 650; // let the card's fade-in finish before the first keystroke
 
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -656,6 +657,26 @@ const modeName = (id: string) =>
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let run = 0; // bumps on every switch so a stale typing loop stops
 
+    // The hero card scroll-reveals (Base.astro adds .in-view, then it fades in
+    // over ~0.7s). Typing that starts before the card is visible is typing
+    // nobody sees, so the first run waits for the reveal to land. Resolves
+    // true if it actually had to wait.
+    const wrap = root.closest<HTMLElement>(".reveal");
+    const revealed = () =>
+      new Promise<boolean>((resolve) => {
+        if (!wrap || !document.documentElement.classList.contains("js") || wrap.classList.contains("in-view")) {
+          resolve(false);
+          return;
+        }
+        const mo = new MutationObserver(() => {
+          if (wrap.classList.contains("in-view")) {
+            mo.disconnect();
+            resolve(true);
+          }
+        });
+        mo.observe(wrap, { attributes: true, attributeFilter: ["class"] });
+      });
+
     // Type each step's command, then reveal its output — a nod to "this is a
     // terminal" that costs about a second and never hides the finished result
     // for long. Re-selecting a tile replays it; switching away cancels it.
@@ -664,6 +685,7 @@ const modeName = (id: string) =>
       const steps = Array.from(tile.querySelectorAll<HTMLElement>("[data-step]"));
       const live = () => token === run;
       steps.forEach((st) => st.toggleAttribute("hidden", true));
+      let first = true;
       for (const st of steps) {
         const typed = st.querySelector<HTMLElement>("[data-typed]")!;
         const out = st.querySelector<HTMLElement>("[data-out]")!;
@@ -672,6 +694,12 @@ const modeName = (id: string) =>
         typed.classList.add("typing");
         out.toggleAttribute("hidden", true);
         st.toggleAttribute("hidden", false);
+        if (first) {
+          // an empty prompt with a blinking cursor while the card fades in
+          if (await revealed()) await sleep(REVEAL_MS);
+          if (!live()) return;
+          first = false;
+        }
         const delay = TYPE_MS / Math.max(text.length, 1);
         for (let i = 1; i <= text.length; i++) {
           await sleep(delay);
